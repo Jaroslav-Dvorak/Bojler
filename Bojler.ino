@@ -4,7 +4,7 @@
  
 const char* ssid = "dvorak";
 const char* password =  "Hlavni115";
-const char* mqttServer = "192.168.82.25";
+const char* mqttServer = "192.168.82.87";
 const int mqttPort = 1883;
 const char* mqttUser = "yourMQTTuser";
 const char* mqttPassword = "yourMQTTpassword";
