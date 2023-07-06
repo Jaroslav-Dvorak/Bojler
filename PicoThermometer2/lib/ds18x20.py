@@ -1,10 +1,7 @@
 # DS18x20 temperature sensor driver for MicroPython.
 # MIT license; Copyright (c) 2016 Damien P. George
 
-import time
 from micropython import const
-from machine import Pin
-from lib.onewire import OneWire
 
 _CONVERT = const(0x44)
 _RD_SCRATCH = const(0xBE)

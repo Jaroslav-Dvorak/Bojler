@@ -2,23 +2,6 @@ from machine import Pin, SPI
 import framebuf
 import utime
 
-# 1 Busy    fialový
-# 2 Res     oranžový
-# 3 D/C     bílý
-# 4 CS      modrý
-# 5 SCL     zelený
-# 6 SDA     žlutý
-# 7 GND     černý
-# 8 VCC     červený
-
-# BUSY_PIN = 21
-# RST_PIN = 20
-# DC_PIN = 17
-# CS_PIN = 16
-# SDA_PIN = Pin(15)  # SDA=MOSI
-# SCL_PIN = Pin(14)  # SCL=SCK
-# SPI_NUM = 1
-
 
 WF_PARTIAL_2IN9 = [
     0x0, 0x40, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,

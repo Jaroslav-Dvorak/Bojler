@@ -62,14 +62,12 @@ def connect_mqtt():
         return False
 
 
-def publish(topic, value):
-    print(topic)
-    print(value)
+def publish(topic, msg):
+    print("topic:", topic, "msg:", msg)
     try:
-        mqtt.publish(topic, value)
+        mqtt.publish(topic, msg)
         print("publish Done")
         return True
-        # publish("Bojler", '{"jimka": ' + disp_msg + ', "ambient": ' + onboard_temperature + '}')
     except Exception as e:
         print(e)
         wlan.disconnect()

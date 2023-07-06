@@ -1,6 +1,15 @@
 from machine import Pin, ADC
 
-# display
+
+# display WeAct
+# 1 Busy    purple
+# 2 Res     orange
+# 3 D/C     white
+# 4 CS      blue
+# 5 SCL     green
+# 6 SDA     yellow
+# 7 GND     black
+# 8 VCC     red
 BUSY_PIN = Pin(21, Pin.IN, Pin.PULL_UP)
 RST_PIN = Pin(20, Pin.OUT)
 DC_PIN = Pin(17, Pin.OUT)

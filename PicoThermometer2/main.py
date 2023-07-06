@@ -1,7 +1,4 @@
 from machine import reset
-import network
-import sys
-from lib.umqtt_simple import MQTTClient
 from time import sleep
 from eink import show
 import wireless
