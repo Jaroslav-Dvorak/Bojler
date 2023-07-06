@@ -115,7 +115,7 @@ while True:
     disp_msg = str(temp) if temp is not None else "null"
 
     try:
-        publish("Bojler", '{"jimka": ' + disp_msg + '"ambient": ' + onboard_temperature + '}')
+        publish("Bojler", '{"jimka": ' + disp_msg + ', "ambient": ' + onboard_temperature + '}')
     except Exception as e:
         print(e)
         wlan.disconnect()
@@ -127,3 +127,4 @@ while True:
     client.disconnect()
     wlan.disconnect()
     time.sleep(5)
+    machine.reset()
