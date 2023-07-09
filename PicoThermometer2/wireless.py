@@ -3,11 +3,11 @@ import network
 from lib.umqtt_simple import MQTTClient
 from gpio_definitions import LED
 
-ssid = "dvorak"
-password = "Hlavni115"
+ssid = "Solar"
+password = "88888888"
 
-broker = "192.168.151.201"
-client_id = "bojler1"
+broker = "192.168.43.37"
+client_id = "RpiBojlerTemperatures"
 mqtt_user = "mqtt"
 mqtt_pass = "mqtt"
 

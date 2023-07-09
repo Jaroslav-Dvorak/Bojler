@@ -45,5 +45,5 @@ def measure_onewire(pin):
 
         if temp is None or temp == 85.0:
             continue
-        temp = int(temp)
+
         return temp

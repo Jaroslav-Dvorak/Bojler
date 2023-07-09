@@ -30,9 +30,9 @@ def show(num_1, num_2, num_3, num_4, bar):
             msg = "--"
         elif -50 < temperatures[i] < 10:
             x = 30
-            msg = str(temperatures[i])
+            msg = str(int(temperatures[i]))
         else:
-            msg = str(temperatures[i])
+            msg = str(int(temperatures[i]))
         Writer.set_textpos(my_display, y, x)
         wri.printstring(msg, True)
 
