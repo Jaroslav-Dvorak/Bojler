@@ -65,7 +65,7 @@ def connect_mqtt():
 def publish(topic, msg):
     print("topic:", topic, "msg:", msg)
     try:
-        mqtt.publish(topic, msg)
+        mqtt.publish(topic, msg, qos=1)
         print("publish Done")
         return True
     except Exception as e:

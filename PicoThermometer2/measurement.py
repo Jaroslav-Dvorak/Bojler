@@ -14,6 +14,38 @@ def measure_analog(pin):
     return voltage
 
 
+class MeasureOnewire:
+    def __init__(self, pin, rom):
+        self.ds_sensor = DS18X20(OneWire(pin))
+        self.rom = rom
+
+    def convert(self):
+        tries = 0
+        while tries < 100:
+            try:
+                self.ds_sensor.convert_temp()
+            except Exception as e:
+                print(e)
+            tries += 1
+
+    def get_temp(self):
+        tries = 0
+        temp = None
+        while tries < 100:
+            tries += 1
+            try:
+                temp = self.ds_sensor.read_temp(self.rom)
+            except Exception as e:
+                print(e)
+                continue
+
+            if temp is None or temp == 85.0:
+                continue
+            else:
+                break
+        return temp
+
+
 def measure_onewire(pin):
     ds_sensor = DS18X20(OneWire(pin))
 
