@@ -1,10 +1,7 @@
 # DS18x20 temperature sensor driver for MicroPython.
 # MIT license; Copyright (c) 2016 Damien P. George
 
-import time
 from micropython import const
-from machine import Pin
-from onewire import OneWire
 
 _CONVERT = const(0x44)
 _RD_SCRATCH = const(0xBE)
@@ -53,41 +50,3 @@ class DS18X20:
             if t & 0x8000:  # sign bit set
                 t = -((t ^ 0xFFFF) + 1)
             return t / 16
-
-
-ds_pin = Pin(0)
-ds_sensor = DS18X20(OneWire(ds_pin))
-
-
-def read_temp_1sens():
-    tries = 0
-    while True:
-        if tries > 100:
-            return "??.?"
-
-        tries += 1
-        temp = None
-        roms = ds_sensor.scan()
-        if len(roms) == 0:
-            print("no rom found")
-            continue
-        try:
-            ds_sensor.convert_temp()
-        except Exception as e:
-            print(e)
-            continue
-
-        time.sleep_ms(750)
-
-        for rom in roms:
-            try:
-                temp = ds_sensor.read_temp(rom)
-            except Exception as e:
-                print(e)
-                continue
-
-        if temp is None or temp == 85.0:
-            continue
-        temp = round(temp, 1)
-        return temp
-

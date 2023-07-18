@@ -39,6 +39,7 @@ def _get_id(device):
         raise ValueError('Device must be derived from FrameBuffer.')
     return id(device)
 
+
 # Basic Writer class for monochrome displays
 class Writer():
 

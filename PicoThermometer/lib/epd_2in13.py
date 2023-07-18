@@ -1,18 +1,7 @@
-from machine import Pin, SPI
+from machine import SPI
 import framebuf
 import utime
-import machine
 
-EPD_WIDTH = 122
-EPD_HEIGHT = 250
-
-SCL_PIN = machine.Pin(2)    # SCL=SCK
-SDA_PIN = machine.Pin(3)    # SDA=MOSI
-CS_PIN = 4
-vcc_pin = machine.Pin(5, machine.Pin.OUT).value(1)
-DC_PIN = 6
-RST_PIN = 7
-BUSY_PIN = 8
 
 WF_PARTIAL_2IN13_V3 = [
     0x0, 0x40, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
@@ -60,66 +49,66 @@ WS_20_30_2IN13_V3 = [
 
 
 class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
-    def __init__(self):
-        self.reset_pin = Pin(RST_PIN, Pin.OUT)
+    def __init__(self, busy, rst, dc, cs, sda, scl, spi_num):
 
-        self.busy_pin = Pin(BUSY_PIN, Pin.IN, Pin.PULL_UP)
-        self.cs_pin = Pin(CS_PIN, Pin.OUT)
-        if EPD_WIDTH % 8 == 0:
-            self.width = EPD_WIDTH
-        else:
-            self.width = (EPD_WIDTH // 8) * 8 + 8
+        self.busy_pin = busy
+        self.reset_pin = rst
+        self.dc_pin = dc
+        self.cs_pin = cs
+        self.spi = SPI(spi_num, baudrate=4000_000, sck=scl, mosi=sda)
 
-        self.height = EPD_HEIGHT
+        self.height = 256
+        self.width = 128
+        # if self.width % 8 == 0:
+        #     self.width = self.width
+        # else:
+        #     self.width = (self.width // 8) * 8 + 8
 
         self.full_lut = WF_PARTIAL_2IN13_V3
         self.partial_lut = WS_20_30_2IN13_V3
-
-        self.spi = SPI(0, baudrate=4000_000, sck=SCL_PIN, mosi=SDA_PIN)
-        self.dc_pin = Pin(DC_PIN, Pin.OUT)
 
         self.buffer = bytearray(self.height * self.width // 8)
         super().__init__(self.buffer, self.height, self.width, framebuf.MONO_VLSB)
         self.init()
 
     def digital_write(self, pin, value):
-        '''
+        """
         function :Change the pin state
         parameter:
             pin : pin
             value : state
-        '''
+        """
         pin.value(value)
 
     def digital_read(self, pin):
-        '''
+        """
         function : Read the pin state
         parameter:
             pin : pin
-        '''
+        """
         return pin.value()
 
     def delay_ms(self, delaytime):
-        '''
+        """
         function : The time delay function
         parameter:
             delaytime : ms
-        '''
+        """
         utime.sleep(delaytime / 1000.0)
 
     def spi_writebyte(self, data):
-        '''
+        """
         function : Write data to SPI
         parameter:
             data : data
-        '''
+        """
         self.spi.write(bytearray(data))
 
     def reset(self):
-        '''
+        """
         function :Hardware reset
         parameter:
-        '''
+        """
         self.digital_write(self.reset_pin, 1)
         self.delay_ms(20)
         self.digital_write(self.reset_pin, 0)
@@ -128,22 +117,22 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.delay_ms(20)
 
     def send_command(self, command):
-        '''
+        """
         function :send command
         parameter:
          command : Command register
-        '''
+        """
         self.digital_write(self.dc_pin, 0)
         self.digital_write(self.cs_pin, 0)
         self.spi_writebyte([command])
         self.digital_write(self.cs_pin, 1)
 
     def send_data(self, data):
-        '''
+        """
         function :send data
         parameter:
          data : Write data
-        '''
+        """
         self.digital_write(self.dc_pin, 1)
         self.digital_write(self.cs_pin, 0)
         self.spi_writebyte([data])
@@ -156,10 +145,10 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.digital_write(self.cs_pin, 1)
 
     def ReadBusy(self):
-        '''
+        """
         function :Wait until the busy_pin goes LOW
         parameter:
-        '''
+        """
         print('busy')
         self.delay_ms(10)
         while (self.digital_read(self.busy_pin) == 1):  # 0: idle, 1: busy
@@ -167,10 +156,10 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         print('busy release')
 
     def TurnOnDisplay(self):
-        '''
+        """
         function : Turn On Display
         parameter:
-        '''
+        """
 
         self.send_command(0x22)  # Display Update Control
         self.send_data(0xC7)
@@ -178,31 +167,31 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.ReadBusy()
 
     def TurnOnDisplayPart(self):
-        '''
+        """
         function : Turn On Display Part
         parameter:
-        '''
+        """
         self.send_command(0x22)  # Display Update Control
         self.send_data(0x0F)  # fast:0x0c, quality:0x0f, 0xcf
         self.send_command(0x20)  # Activate Display Update Sequence
         self.ReadBusy()
 
     def LUT(self, lut):
-        '''
+        """
         function : Set lut
         parameter:
             lut : lut data
-        '''
+        """
         self.send_command(0x32)
         self.send_data1(lut[0:153])
         self.ReadBusy()
 
     def LUT_by_host(self, lut):
-        '''
+        """
         function : Send lut data and configuration
         parameter:
             lut : lut data
-        '''
+        """
         self.LUT(lut)  # lut
         self.send_command(0x3F)
         self.send_data(lut[153])
@@ -216,14 +205,14 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.send_data(lut[158])
 
     def SetWindows(self, Xstart, Ystart, Xend, Yend):
-        '''
+        """
         function : Setting the display window
         parameter:
             Xstart : X-axis starting position
             Ystart : Y-axis starting position
             Xend : End position of X-axis
             Yend : End position of Y-axis
-        '''
+        """
         self.send_command(0x44)  # SET_RAM_X_ADDRESS_START_END_POSITION
         self.send_data((Xstart >> 3) & 0xFF)
         self.send_data((Xend >> 3) & 0xFF)
@@ -235,12 +224,12 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.send_data((Yend >> 8) & 0xFF)
 
     def SetCursor(self, Xstart, Ystart):
-        '''
+        """
         function : Set Cursor
         parameter:
             Xstart : X-axis starting position
             Ystart : Y-axis starting position
-        '''
+        """
         self.send_command(0x4E)  # SET_RAM_X_ADDRESS_COUNTER
         self.send_data(Xstart & 0xFF)
 
@@ -249,10 +238,10 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.send_data((Ystart >> 8) & 0xFF)
 
     def init(self):
-        '''
+        """
         function : Initialize the e-Paper register
         parameter:
-        '''
+        """
         print('init')
         self.reset()
         self.delay_ms(100)
@@ -286,21 +275,21 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.LUT_by_host(self.partial_lut)
 
     def Clear(self):
-        '''
+        """
         function : Clear screen
         parameter:
-        '''
+        """
         self.send_command(0x24)
         self.send_data1([0xff] * self.height * int(self.width / 8))
 
         self.TurnOnDisplay()
 
     def display(self, image):
-        '''
+        """
         function : Sends the image buffer in RAM to e-Paper and displays
         parameter:
             image : Image data
-        '''
+        """
         self.send_command(0x24)
         for j in range(int(self.width / 8) - 1, -1, -1):
             for i in range(0, self.height):
@@ -309,11 +298,11 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.TurnOnDisplay()
 
     def Display_Base(self, image):
-        '''
+        """
         function : Refresh a base image
         parameter:
             image : Image data
-        '''
+        """
         self.send_command(0x24)
         for j in range(int(self.width / 8) - 1, -1, -1):
             for i in range(0, self.height):
@@ -327,11 +316,11 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.TurnOnDisplay()
 
     def display_Partial(self, image):
-        '''
+        """
         function : Sends the image buffer in RAM to e-Paper and partial refresh
         parameter:
             image : Image data
-        '''
+        """
         self.digital_write(self.reset_pin, 0)
         self.delay_ms(1)
         self.digital_write(self.reset_pin, 1)
@@ -370,14 +359,25 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.TurnOnDisplayPart()
 
     def sleep(self):
-        '''
+        """
         function : Enter sleep mode
         parameter:
-        '''
+        """
         self.send_command(0x10)  # enter deep sleep
         self.send_data(0x01)
         self.delay_ms(100)
 
+
+class NotionalDisplay(framebuf.FrameBuffer):
+    def __init__(self, width, height, buffer):
+        self.width = height
+        self.height = width
+        self.buffer = buffer
+        self.mode = framebuf.MONO_VLSB
+        super().__init__(self.buffer, self.width, self.height, self.mode)
+
+    def show(self):
+        ...
     # epd = EPD_2in13_V3_Portrait()
     # epd.Clear()
     #
