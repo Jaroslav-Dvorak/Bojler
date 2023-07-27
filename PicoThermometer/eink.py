@@ -19,9 +19,60 @@ class Eink:
         self.wri.bgcolor = self.white
 
         self.fb.fill(self.white)
+        self.w = 249
+        self.h = 119
 
-    def clear(self):
+    def clear(self, background):
         self.eink.Clear()
+        self.eink.fill(background)
+
+    def chart(self, values, maximum, minimum, color=0):
+        left = -1
+        right = self.w
+        top = 0
+        bottom = self.h
+
+        # val = 66
+        # norm = (val - minimum)/(maximum - minimum)
+        # out = norm*(top-bottom)+bottom
+        # values = [int(out)]*100
+        optimized_values = [int(((val - minimum) / (maximum - minimum)) * ((bottom - top) + top)) for val in values]
+
+        # self.eink.line(0, 0, w, 0, color)  # top horizontal
+        # self.eink.line(0, h, w, h, color)  # bottom horizontal
+        #
+
+        self.eink.line(left+1, top, left+1, bottom, color)  # left vertical
+        self.eink.line(left+2, top, left+2, bottom, color)  # left vertical
+        self.eink.line(left+3, top, left+3, bottom, color)  # left vertical
+        # self.eink.line(w, h, w, 0, color)  # right vertical
+
+        spread = 1
+        for index, _ in enumerate(optimized_values, start=1):
+            value = optimized_values[-index]
+            y1 = bottom - value
+            x1 = right - index*spread
+            x2 = right - ((index*spread)+spread)
+            try:
+                value = optimized_values[-index - 1]
+                y2 = bottom - value
+            except IndexError:
+                break
+
+            # print("x1:", x1, " y1:", y1)
+            # print("x2:", x2, " y2:", y2)
+            self.eink.line(x1, y1, x2, y2, color)
+
+        self.eink.line(left+4, top, left+4, bottom, not color)  # left vertical
+        self.eink.line(left+5, top, left+5, bottom, not color)  # left vertical
+
+        self.eink.fill_rect(left+6, top, left+20, top+10, not color)
+        self.eink.text(str(maximum), left+7, top, color)
+        self.eink.fill_rect(left+6, bottom-10, left+20, bottom-20, not color)
+        self.eink.text(str(minimum), left+7, bottom-7, color)
+
+        self.eink.fill_rect(right-40, top, right, top+15, not color)
+        self.eink.text(str(values[-1]), right-35, top, color)
 
     def show(self, num_1):
 

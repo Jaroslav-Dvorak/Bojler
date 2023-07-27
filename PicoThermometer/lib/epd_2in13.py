@@ -57,12 +57,16 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.cs_pin = cs
         self.spi = SPI(spi_num, baudrate=4000_000, sck=scl, mosi=sda)
 
-        self.height = 256
-        self.width = 128
-        # if self.width % 8 == 0:
-        #     self.width = self.width
-        # else:
-        #     self.width = (self.width // 8) * 8 + 8
+        # self.height = 256
+        # self.width = 128
+
+        self.height = 250
+        self.width = 122
+
+        if self.width % 8 == 0:
+            self.width = self.width
+        else:
+            self.width = (self.width // 8) * 8 + 8
 
         self.full_lut = WF_PARTIAL_2IN13_V3
         self.partial_lut = WS_20_30_2IN13_V3
@@ -258,7 +262,7 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.send_command(0x11)  # data entry mode
         self.send_data(0x07)
 
-        self.SetWindows(0, 0, self.width - 1, self.height - 1)
+        self.SetWindows(0-6, 0, self.width - 1-6, self.height - 1)
         self.SetCursor(0, 0)
 
         self.send_command(0x3C)  # BorderWaveform
