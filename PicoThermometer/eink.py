@@ -20,16 +20,16 @@ class Eink:
 
         self.fb.fill(self.white)
         self.w = 249
-        self.h = 119
+        self.h = 128
 
     def clear(self, background):
         self.eink.Clear()
         self.eink.fill(background)
 
     def chart(self, values, maximum, minimum, color=0):
-        left = -1
+        left = 0-1
         right = self.w
-        top = 0
+        top = 0+6
         bottom = self.h
 
         # val = 66

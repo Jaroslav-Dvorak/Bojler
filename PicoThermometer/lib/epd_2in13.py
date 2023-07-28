@@ -262,7 +262,8 @@ class EPD_2in13_V3_Landscape(framebuf.FrameBuffer):
         self.send_command(0x11)  # data entry mode
         self.send_data(0x07)
 
-        self.SetWindows(0-6, 0, self.width - 1-6, self.height - 1)
+        # self.SetWindows(0-6, 0, self.width - 1-6, self.height - 1)
+        self.SetWindows(0, 0, self.width - 1, self.height - 1)
         self.SetCursor(0, 0)
 
         self.send_command(0x3C)  # BorderWaveform

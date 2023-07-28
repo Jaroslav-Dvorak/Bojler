@@ -43,27 +43,28 @@ if __name__ == '__main__':
         i += 1
         # eink.show(str(round(onboard_temperature, 1)))
 
-        # eink.eink.line(-10, 0, 256, 130, black)
-        # eink.eink.line(-10, 130, 256, 0, black)
-
-        # eink.eink.pixel(150, 200)
-
-        # str_temps = [str(t) for t in temperatures]
-        # str_temps_1 = str_temps[0:5]
-        # str_temps_2 = str_temps[5:]
-        # eink.eink.text(" ".join(str_temps_1), 20, 10, black)
-        # eink.eink.text(" ".join(str_temps_2), 20, 20, black)
-        #
-        # eink.eink.text(storage, 0, 40, black)
-        # eink.eink.text(memory, 0, 50, black)
-        # eink.eink.text(cpu, 0, 60, black)
-
         eink.chart(temperatures, minimum=15, maximum=35)
+        y = 0
+        for i in range(20):
+            eink.eink.text(str(i), 150, y, black)
+            # eink.eink.rect(150-1, y-1, 10, 11, black)
+            eink.eink.hline(150, y+8, 8, black)
+            y += 10
 
-        eink.eink.display(eink.eink.buffer)
+        eink.eink.Display_Base(eink.eink.buffer)
+        # eink.eink.display(eink.eink.buffer)
+        # eink.eink.display_Partial(eink.eink.buffer)
+
+        y = 0
+
+        for _ in range(20):
+            eink.eink.hline(150, y+8, 8, white)
+            eink.eink.display_Partial(eink.eink.buffer)
+            eink.eink.hline(150, y + 8, 8, black)
+            eink.eink.display_Partial(eink.eink.buffer)
 
         gc.collect()
 
-        machine.lightsleep(60000)
+        # machine.lightsleep(60000)
         # break
-        # sleep(5)
+        sleep(60000)
