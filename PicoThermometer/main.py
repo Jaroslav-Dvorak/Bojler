@@ -44,29 +44,36 @@ if __name__ == '__main__':
         # eink.show(str(round(onboard_temperature, 1)))
 
         eink.chart(temperatures, minimum=15, maximum=35)
-        y = 0
-        for i in range(20):
-            eink.eink.text(str(i), 150, y, black)
-            # eink.eink.rect(150-1, y-1, 10, 11, black)
-            eink.eink.hline(150, y+8, 8, black)
-            y += 10
+        # y = 0
+        # for i in range(20):
+        #     eink.eink.text(str(i), 150, y, black)
+        #     # eink.eink.rect(150-1, y-1, 10, 11, black)
+        #     eink.eink.hline(150, y+8, 8, black)
+        #     y += 10
+
+        bat_voltage = measurement.measure_analog(BATT_ADC) * 2
+        # soc = int((1 - ((4.0 - bat_voltage)/1.5)) * 100)
+        # soc = 0 if soc < 0 else soc
+        bat_voltage = str(round(bat_voltage, 2)) + "V"
+        eink.eink.text(bat_voltage, 60, 8, black)
+
 
         eink.eink.Display_Base(eink.eink.buffer)
         # eink.eink.display(eink.eink.buffer)
         # eink.eink.display_Partial(eink.eink.buffer)
 
-        y = 0
+        # y = 0
+        #
+        # for _ in range(20):
+        #     eink.eink.hline(150, y+8, 8, white)
+        #     eink.eink.display_Partial(eink.eink.buffer)
+        #     eink.eink.hline(150, y + 8, 8, black)
+        #     eink.eink.display_Partial(eink.eink.buffer)
 
-        for _ in range(20):
-            eink.eink.hline(150, y+8, 8, white)
-            eink.eink.display_Partial(eink.eink.buffer)
-            eink.eink.hline(150, y + 8, 8, black)
-            eink.eink.display_Partial(eink.eink.buffer)
-
-        gc.collect()
+        # gc.collect()
 
         # machine.lightsleep(60000)
         # break
         sleep(1)
         DONE_PIN.value(1)
-        sleep(60000)
+        sleep(10)

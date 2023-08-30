@@ -47,6 +47,12 @@ while True:
     viz = Vizualizer(background)
     viz.chart(temperatures, minimum=15, maximum=35)
 
+    bat_voltage = measurement.measure_analog(BATT_ADC) * 2
+    # soc = int((1 - ((4.0 - bat_voltage)/1.5)) * 100)
+    # soc = 0 if soc < 0 else soc
+    bat_voltage = str(round(bat_voltage, 2)) + "V"
+    viz.tiny_text(bat_voltage, 60, Top)
+
     eink = GDEY0213Z98(busy=BUSY_PIN, rst=RST_PIN, dc=DC_PIN, cs=CS_PIN, spi=SPI, border=background)
     # eink.show_straight(gImage_BW1, gImage_RW1)     # To Display one image using full screen refresh.
     eink.show(viz.buffer_black, viz.buffer_red)     # To Display one image using full screen refresh.
