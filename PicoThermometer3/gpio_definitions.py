@@ -20,7 +20,7 @@ SPI_NUM = 1
 SPI = Spi(SPI_NUM, baudrate=1_000_000, sck=SCL_PIN, mosi=SDA_PIN)
 
 # tp5110
-DONE_PIN = Pin(22, Pin.OUT)
+DONE_PIN = Pin(0, Pin.OUT)
 
 # analog
 BATT_ADC = ADC(28)

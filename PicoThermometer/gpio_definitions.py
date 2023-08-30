@@ -9,17 +9,16 @@ from machine import Pin, ADC
 # 6 SDA     yellow
 # 7 GND     black
 # 8 VCC     red
-vcc_pin = Pin(5, Pin.OUT).value(1)
-BUSY_PIN = Pin(8, Pin.IN, Pin.PULL_UP)
-RST_PIN = Pin(7, Pin.OUT)
-DC_PIN = Pin(6, Pin.OUT)
-CS_PIN = Pin(4, Pin.OUT)
-SDA_PIN = Pin(3)  # SDA=MOSI
-SCL_PIN = Pin(2)  # SCL=SCK
-SPI_NUM = 0
+BUSY_PIN = Pin(10, Pin.IN, Pin.PULL_UP)
+RST_PIN = Pin(11, Pin.OUT)
+DC_PIN = Pin(12, Pin.OUT)
+CS_PIN = Pin(13, Pin.OUT)
+SCL_PIN = Pin(14)  # SCL=SCK
+SDA_PIN = Pin(15)  # SDA=MOSI
+SPI_NUM = 1
 
 # tp5110
-DONE_PIN = Pin(22, Pin.OUT)
+DONE_PIN = Pin(0, Pin.OUT)
 
 # analog
 BATT_ADC = ADC(28)

@@ -1,4 +1,3 @@
-
 // base class GxEPD2_GFX can be used to pass references or pointers to the display instance as parameter, uses ~1.2k more code
 // enable or disable GxEPD2_GFX base class
 #define ENABLE_GxEPD2_GFX 0
@@ -11,23 +10,24 @@
 
 // 2.13'' EPD Module
 //GxEPD2_BW<GxEPD2_213_BN, GxEPD2_213_BN::HEIGHT> display(GxEPD2_213_BN(/*CS=5*/ 5, /*DC=*/ 0, /*RST=*/ 2, /*BUSY=*/ 15)); // DEPG0213BN 122x250, SSD1680
-//GxEPD2_3C<GxEPD2_213_Z98c, GxEPD2_213_Z98c::HEIGHT> display(GxEPD2_213_Z98c(/*CS=5*/ 5, /*DC=*/ 0, /*RST=*/ 2, /*BUSY=*/ 15)); // GDEY0213Z98 122x250, SSD1680
+GxEPD2_3C<GxEPD2_213_Z98c, GxEPD2_213_Z98c::HEIGHT> display(GxEPD2_213_Z98c(/*CS=5*/ 5, /*DC=*/ 4, /*RST=*/ 2, /*BUSY=*/ 15)); // GDEY0213Z98 122x250, SSD1680
 
 // 2.9'' EPD Module
 //GxEPD2_BW<GxEPD2_290_BS, GxEPD2_290_BS::HEIGHT> display(GxEPD2_290_BS(/*CS=5*/ 5, /*DC=*/ 0, /*RST=*/ 2, /*BUSY=*/ 15)); // DEPG0290BS 128x296, SSD1680
-GxEPD2_3C<GxEPD2_290_C90c, GxEPD2_290_C90c::HEIGHT> display(GxEPD2_290_C90c(/*CS=5*/ 16, /*DC=*/ 17, /*RST=*/ 20, /*BUSY=*/ 21)); // GDEM029C90 128x296, SSD1680
+//GxEPD2_3C<GxEPD2_290_C90c, GxEPD2_290_C90c::HEIGHT> display(GxEPD2_290_C90c(/*CS=5*/ 5, /*DC=*/ 0, /*RST=*/ 2, /*BUSY=*/ 15)); // GDEM029C90 128x296, SSD1680
 
 void setup()
 {
   display.init(115200,true,50,false);
+
   helloWorld();
-  helloFullScreenPartialMode();
-  delay(1000);
-  if (display.epd2.hasFastPartialUpdate)
-  {
-    showPartialUpdate();
-    delay(1000);
-  }
+  // helloFullScreenPartialMode();
+  // delay(1000);
+  // if (display.epd2.hasFastPartialUpdate)
+  // {
+  //   showPartialUpdate();
+  //   delay(1000);
+  // }
   display.hibernate();
 }
 
@@ -49,13 +49,13 @@ void helloWorld()
   do
   {
     display.fillScreen(GxEPD_WHITE);
-    display.setCursor(x, y-tbh);
-    display.print(HelloWorld);
-    display.setTextColor(display.epd2.hasColor ? GxEPD_RED : GxEPD_BLACK);
-    display.getTextBounds(HelloWeACtStudio, 0, 0, &tbx, &tby, &tbw, &tbh);
-    x = ((display.width() - tbw) / 2) - tbx;
-    display.setCursor(x, y+tbh);
-    display.print(HelloWeACtStudio);
+  //   display.setCursor(x, y-tbh);
+  //   display.print(HelloWorld);
+  //   display.setTextColor(display.epd2.hasColor ? GxEPD_RED : GxEPD_BLACK);
+  //   display.getTextBounds(HelloWeACtStudio, 0, 0, &tbx, &tby, &tbw, &tbh);
+  //   x = ((display.width() - tbw) / 2) - tbx;
+  //   display.setCursor(x, y+tbh);
+  //   display.print(HelloWeACtStudio);
   }
   while (display.nextPage());
 }

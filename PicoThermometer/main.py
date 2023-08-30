@@ -67,4 +67,6 @@ if __name__ == '__main__':
 
         # machine.lightsleep(60000)
         # break
+        sleep(1)
+        DONE_PIN.value(1)
         sleep(60000)

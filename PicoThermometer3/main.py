@@ -1,13 +1,12 @@
 from gdey0213z98 import GDEY0213Z98
 # from pict import *
-from time import sleep_ms
+from time import sleep
 from gpio_definitions import *
 from vizualizer import Vizualizer, BLACK, WHITE, RED
 import nonvolatile
 import measurement
 
 background = WHITE
-viz = Vizualizer(background)
 
 Left = 0
 Right = 249
@@ -43,8 +42,9 @@ while True:
     elif optimized_temp > 128:
         optimized_temp = 128
     temperatures = nonvolatile.save_and_get_last_values(optimized_temp, "temperatures.dat")
-
     temperatures = [temp / 10 + 25 for temp in temperatures]
+
+    viz = Vizualizer(background)
     viz.chart(temperatures, minimum=15, maximum=35)
 
     eink = GDEY0213Z98(busy=BUSY_PIN, rst=RST_PIN, dc=DC_PIN, cs=CS_PIN, spi=SPI, border=background)
@@ -52,4 +52,7 @@ while True:
     eink.show(viz.buffer_black, viz.buffer_red)     # To Display one image using full screen refresh.
 
     eink.deep_sleep()     # Enter the sleep mode and please do not delete it, otherwise it will reduce the lifespan of the screen.\
-    sleep_ms(10000)
+
+    sleep(1)
+    DONE_PIN.value(1)
+    sleep(10)
