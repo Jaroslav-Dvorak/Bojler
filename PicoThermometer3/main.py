@@ -1,8 +1,8 @@
-from gdey0213z98 import GDEY0213Z98
+from lib.gdey0213z98 import GDEY0213Z98
 # from pict import *
 from time import sleep
 from gpio_definitions import *
-from vizualizer import Vizualizer, BLACK, WHITE, RED
+from display.widgets import Widgets, WHITE, RED, BLACK
 import nonvolatile
 import measurement
 
@@ -10,8 +10,8 @@ background = WHITE
 
 Left = 0
 Right = 249
-Top = 121
-Bottom = 0
+Top = 0
+Bottom = 121
 
 # viz.tiny_text("zdar zdar zdarau cus", Left, Top - 20, BLACK)
 # viz.tiny_text("CHRRRRRST", Left, Bottom + 8, 2)
@@ -44,7 +44,7 @@ while True:
     temperatures = nonvolatile.save_and_get_last_values(optimized_temp, "temperatures.dat")
     temperatures = [temp / 10 + 25 for temp in temperatures]
 
-    viz = Vizualizer(background)
+    viz = Widgets()
     viz.chart(temperatures, minimum=15, maximum=35)
 
     bat_voltage = measurement.measure_analog(BATT_ADC) * 2
@@ -52,6 +52,9 @@ while True:
     # soc = 0 if soc < 0 else soc
     bat_voltage = str(round(bat_voltage, 2)) + "V"
     viz.tiny_text(bat_voltage, 60, Top)
+    #
+    # viz.fill_circle(90, 30, 40, RED)
+    # viz.circle(40, 60, 60, WHITE)
 
     eink = GDEY0213Z98(busy=BUSY_PIN, rst=RST_PIN, dc=DC_PIN, cs=CS_PIN, spi=SPI, border=background)
     # eink.show_straight(gImage_BW1, gImage_RW1)     # To Display one image using full screen refresh.
