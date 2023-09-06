@@ -34,13 +34,18 @@ Bottom = 121
 # EPD_WhiteScreen_ALL(gImage_BW1, gImage_RW1)     # To Display one image using full screen refresh.
 
 while True:
-    temper_onboard_voltage = measurement.measure_analog(TEMPER_ADC)
-    onboard_temperature = 27 - (temper_onboard_voltage - 0.706) / 0.001721
-    optimized_temp = int((onboard_temperature - 25) * 10)
+    dalastemp = measurement.measure_onewire(TEMP_SENS_1)
+    optimized_temp = int((dalastemp - 25) * 10)
+
+    # temper_onboard_voltage = measurement.measure_analog(TEMPER_ADC)
+    # onboard_temperature = 27 - (temper_onboard_voltage - 0.706) / 0.001721
+    # optimized_temp = int((onboard_temperature - 25) * 10)
+
     if optimized_temp < -127:
         optimized_temp = -127
     elif optimized_temp > 128:
         optimized_temp = 128
+
     temperatures = nonvolatile.save_and_get_last_values(optimized_temp, "temperatures.dat")
     temperatures = [temp / 10 + 25 for temp in temperatures]
 

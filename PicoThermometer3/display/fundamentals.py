@@ -33,7 +33,6 @@ class Fundamentals:
             elif color == RED:
                 return ((self.canvas_red, 1, False),)
             else:
-                print("je to tu")
                 return (self.canvas_red, 0, False), (self.canvas_black, 1, True),
         elif self.background == BLACK:
             if color == WHITE:

@@ -27,7 +27,7 @@ BATT_ADC = ADC(28)
 TEMPER_ADC = ADC(4)
 
 # dallas
-# TEMP_SENS_1 = Pin(0)
+TEMP_SENS_1 = Pin(19)
 # TEMP_SENS_2 = Pin(1)
 # TEMP_SENS_3 = Pin(2)
 
