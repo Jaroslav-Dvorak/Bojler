@@ -1,5 +1,5 @@
 from lib.gdey0213z98 import GDEY0213Z98
-# from pict import *
+from display.pict import gImage_BW1, gImage_RW1
 from time import sleep
 from gpio_definitions import *
 from display.widgets import Widgets, WHITE, RED, BLACK
@@ -13,6 +13,9 @@ Right = 249
 Top = 0
 Bottom = 121
 
+
+eink = GDEY0213Z98(busy=BUSY_PIN, rst=RST_PIN, dc=DC_PIN, cs=CS_PIN, spi=SPI, border=background)
+viz = Widgets()
 # viz.tiny_text("zdar zdar zdarau cus", Left, Top - 20, BLACK)
 # viz.tiny_text("CHRRRRRST", Left, Bottom + 8, 2)
 #
@@ -33,6 +36,10 @@ Bottom = 121
 # epd_hw_init(rotation=False)   # Full screen refresh initialization.
 # EPD_WhiteScreen_ALL(gImage_BW1, gImage_RW1)     # To Display one image using full screen refresh.
 
+# eink.show_straight(gImage_BW1, gImage_RW1)
+# eink.deep_sleep()
+# exit()
+
 while True:
     dalastemp = measurement.measure_onewire(TEMP_SENS_1)
     optimized_temp = int((dalastemp - 25) * 10)
@@ -49,7 +56,6 @@ while True:
     temperatures = nonvolatile.save_and_get_last_values(optimized_temp, "temperatures.dat")
     temperatures = [temp / 10 + 25 for temp in temperatures]
 
-    viz = Widgets()
     viz.chart(temperatures, minimum=15, maximum=35)
 
     bat_voltage = measurement.measure_analog(BATT_ADC) * 2
@@ -61,7 +67,7 @@ while True:
     # viz.fill_circle(90, 30, 40, RED)
     # viz.circle(40, 60, 60, WHITE)
 
-    eink = GDEY0213Z98(busy=BUSY_PIN, rst=RST_PIN, dc=DC_PIN, cs=CS_PIN, spi=SPI, border=background)
+
     # eink.show_straight(gImage_BW1, gImage_RW1)     # To Display one image using full screen refresh.
     eink.show(viz.buffer_black, viz.buffer_red)     # To Display one image using full screen refresh.
 
