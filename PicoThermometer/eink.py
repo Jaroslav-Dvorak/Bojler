@@ -23,7 +23,7 @@ class Eink:
         self.h = 128
 
     def clear(self, background):
-        self.eink.Clear()
+        # self.eink.Clear()
         self.eink.fill(background)
 
     def chart(self, values, maximum, minimum, color=0):

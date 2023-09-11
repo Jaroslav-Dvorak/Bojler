@@ -16,7 +16,7 @@ Bottom = 121
 
 eink = GDEY0213Z98(busy=BUSY_PIN, rst=RST_PIN, dc=DC_PIN, cs=CS_PIN, spi=SPI, border=background)
 viz = Widgets()
-# viz.tiny_text("zdar zdar zdarau cus", Left, Top - 20, BLACK)
+# viz.tiny_text("zdar zdarau cus", Left, Top - 20, BLACK)
 # viz.tiny_text("CHRRRRRST", Left, Bottom + 8, 2)
 #
 # viz.line(Left, Bottom, Right, Bottom, RED)

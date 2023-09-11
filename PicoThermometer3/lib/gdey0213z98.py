@@ -82,8 +82,8 @@ class GDEY0213Z98:
         self.send_data(HEIGHT_END_BIT // 256)
 
         # set RAM x address count to 0
-        self.send_data(WIDTH_END_BYTE)
         self.send_command(0x4E)
+        self.send_data(0)
 
         # set RAM y address count to 0X199;
         self.send_command(0x4F)

@@ -1,4 +1,5 @@
 from machine import Pin, ADC
+from machine import SPI as Spi
 
 # display WeAct
 # 1 Busy    purple
@@ -16,6 +17,7 @@ CS_PIN = Pin(13, Pin.OUT)
 SCL_PIN = Pin(14)  # SCL=SCK
 SDA_PIN = Pin(15)  # SDA=MOSI
 SPI_NUM = 1
+SPI = Spi(SPI_NUM, baudrate=1_000_000, sck=SCL_PIN, mosi=SDA_PIN)
 
 # tp5110
 DONE_PIN = Pin(0, Pin.OUT)
