@@ -1,4 +1,4 @@
-from display.fundamentals import Fundamentals, BLACK, WHITE, RED
+from display.fundamentals_brw import Fundamentals, BLACK, WHITE, RED
 
 
 class Widgets(Fundamentals):
