@@ -18,9 +18,17 @@ class Widgets(Drawing):
         for thick in range(thickness):
             self.line(x+thick, y, x+thick, h, color)  # left vertical
 
+        self.fill_rect(x+3, h, 20, 12, WHITE)
+        self.tiny_text(str(maximum), x+5, h, color)
+        self.fill_rect(x+3, y-11, 20, 12, WHITE)
+        self.tiny_text(str(minimum), x+5, y-8, color)
+
         spread = 1
         for index, _ in enumerate(optimized_values, start=1):
-            value = optimized_values[-index]
+            try:
+                value = optimized_values[-index]
+            except IndexError:
+                return
             y1 = y - value
             x1 = w - index*spread
             x2 = w - ((index*spread)+spread)
@@ -28,16 +36,11 @@ class Widgets(Drawing):
                 value = optimized_values[-index - 1]
                 y2 = y - value
             except IndexError:
-                break
-
-            thickness = 2
-            for thick in range(thickness):
-                self.line(x1, y1+thick, x2, y2+thick, color)
-
-        self.fill_rect(x+3, h, 20, 12, WHITE)
-        self.tiny_text(str(maximum), x+5, h, color)
-        self.fill_rect(x+3, y-11, 20, 12, WHITE)
-        self.tiny_text(str(minimum), x+5, y-8, color)
+                pass
+            else:
+                thickness = 2
+                for thick in range(thickness):
+                    self.line(x1, y1+thick, x2, y2+thick, color)
 
         self.fill_rect(w-32, h, 33, 12, WHITE)
         self.tiny_text(str(values[-1]), w-31, h, color)

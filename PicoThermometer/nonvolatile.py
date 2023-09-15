@@ -1,5 +1,6 @@
 
 SEEK_END = 2
+Settings = {"full_refresh_cadence": 10}
 
 
 def get_last_values(num_of_vals, filename, max_filesize=1024 * 100):
@@ -15,12 +16,12 @@ def get_last_values(num_of_vals, filename, max_filesize=1024 * 100):
                 values_binary = f.read(num_of_vals)
             values = [vb-127 for vb in values_binary]
     except OSError:
-        return []
+        return 0, []
 
     if filesize > max_filesize:
         with open(filename, "wb") as f:
             f.write(values_binary)
-    return values
+    return filesize, values
 
 
 def save_value(value, filename):

@@ -1,7 +1,8 @@
 import framebuf
 from writer import Writer
 import bigfont
-from epd_2in13_bw import HEIGHT, WIDTH, BOTTOM, TOP
+from lib.display.epd_2in13_bw import HEIGHT, WIDTH, BOTTOM, TOP
+
 
 WHITE = 1
 BLACK = 0
