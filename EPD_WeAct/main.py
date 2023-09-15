@@ -9,42 +9,20 @@ Right = 249
 Top = 0
 Bottom = 121
 
-# BLACK = not BLACK
-# WHITE = not WHITE
-
 draw = Drawing(background=WHITE)
 epd = Epd2in13bw(BUSY_PIN, RST_PIN, DC_PIN, CS_PIN, SPI)
 
-draw.large_text("12.5", 0, 0, BLACK)
+draw.circle(100, 60, 60)
+epd.load_previous(draw.img)
 
-epd.show(draw.img)
+size = 10
+for x in range(0, HEIGHT_250, size):
+    draw.clear()
+    draw.fill_rect(x, 0, size, size)
+    epd.show_partial(draw.img)
 
-# for _ in range(3):
-#     draw.hline(150, 66, 8, WHITE)
-#     epd.show_partial(draw.img)
-#     draw.hline(150, 66, 8, BLACK)
-#     epd.show_partial(draw.img)
-#
-# draw.line(Left, Bottom, Right, Bottom, BLACK)
-# draw.line(Left, Top, Left, Bottom, BLACK)
-# draw.line(Right, Top, Right, Bottom, BLACK)
-# draw.line(Left, Top, Right, Top, BLACK)
-# epd.show(draw.img)
-#
-# for _ in range(3):
-#     draw.hline(150, 66, 8, BLACK)
-#     epd.show_partial(draw.img)
-#     draw.hline(150, 66, 8, WHITE)
-#     epd.show_partial(draw.img)
-
-# draw.hline(150, 66, 8, BLACK)
-# epd.show_partial(draw.img)
-
-# sleep_ms(1000)
-# canvas_black.text("cos", 66, 20, 0)
-# epd.show_partial(buffer_black)
+draw.clear()
+draw.circle(100, 60, 60)
+epd.show_full(draw.img)
 
 epd.deep_sleep()
-
-
-

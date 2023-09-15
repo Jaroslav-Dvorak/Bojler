@@ -11,8 +11,8 @@ class SSD1680:
 
         self.height = height
         self.width = width
-        # self.height_end_bit = height - 1
-        # self.width_end_byte = (width // 8 - 1)
+        self.height_end_bit = height - 1
+        self.width_end_byte = (width // 8) - 1
 
         self.epd_hw_init()
 

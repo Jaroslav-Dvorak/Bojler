@@ -1,7 +1,7 @@
 import framebuf
 from writer import Writer
 import bigfont
-from epd_2in13_brw import HEIGHT_250, WIDTH_128, BOTTOM, TOP
+from epd_2in13_bw import HEIGHT, WIDTH, BOTTOM, TOP
 
 WHITE = 1
 BLACK = 0
@@ -9,8 +9,8 @@ BLACK = 0
 
 class Drawing:
     def __init__(self, background=WHITE):
-        self.img = bytearray(HEIGHT_250 * WIDTH_128)
-        self.canvas = framebuf.FrameBuffer(self.img, HEIGHT_250, WIDTH_128, framebuf.MONO_VLSB)
+        self.img = bytearray(HEIGHT * WIDTH)
+        self.canvas = framebuf.FrameBuffer(self.img, HEIGHT, WIDTH, framebuf.MONO_VLSB)
         self.background = background
         self.clear()
 
@@ -99,7 +99,7 @@ class Drawing:
     def large_text(self, string, x, y, color=BLACK):
         x -= 4
         invert = not color
-        writer_inst = Writer(self.canvas, WIDTH_128, HEIGHT_250, bigfont)
+        writer_inst = Writer(self.canvas, WIDTH, HEIGHT, bigfont)
         writer_inst.fgcolor = color
         writer_inst.bgcolor = not color
         writer_inst.set_textpos(TOP, x)

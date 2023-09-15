@@ -37,7 +37,7 @@ class Epd2in13bw(SSD1680):
         ]
         self.partial_in_use = False
 
-    def show(self, data_black):
+    def show_full(self, data_black):
         if self.partial_in_use:
             self.epd_hw_init()
             self.partial_in_use = False
@@ -69,24 +69,24 @@ class Epd2in13bw(SSD1680):
         self.reset.value(False)
         sleep_ms(1)
         self.reset.value(True)
+        if not self.partial_in_use:
+            self.send_lut()
 
-        self.send_lut()
+            self.send_command(0x37)
+            self.send_int_data(0x00)
+            self.send_int_data(0x00)
+            self.send_int_data(0x00)
+            self.send_int_data(0x00)
+            self.send_int_data(0x00)
+            self.send_int_data(0x40)
+            self.send_int_data(0x00)
+            self.send_int_data(0x00)
+            self.send_int_data(0x00)
+            self.send_int_data(0x00)
+            self.send_int_data(0x00)
 
-        self.send_command(0x37)
-        self.send_int_data(0x00)
-        self.send_int_data(0x00)
-        self.send_int_data(0x00)
-        self.send_int_data(0x00)
-        self.send_int_data(0x00)
-        self.send_int_data(0x40)
-        self.send_int_data(0x00)
-        self.send_int_data(0x00)
-        self.send_int_data(0x00)
-        self.send_int_data(0x00)
-        self.send_int_data(0x00)
-
-        self.send_command(0x3C)
-        self.send_int_data(0x80)
+            self.send_command(0x3C)
+            self.send_int_data(0x80)
 
         self.send_command(0x22)
         self.send_int_data(0xC0)
@@ -113,3 +113,9 @@ class Epd2in13bw(SSD1680):
         self.send_int_data(0x0c)  # fast:0x0c, quality:0x0f, 0xcf
         self.send_command(0x20)  # Activate Display Update Sequence
         self.wait_busy()
+
+    def load_previous(self, image):
+        self.send_command(0x26)
+        for j in range(self.width_end_byte, -1, -1):
+            for i in range(0, self.height):
+                self.send_int_data(image[i + j * self.height])
