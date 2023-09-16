@@ -60,3 +60,9 @@ def show_overview(batt_voltage, ip):
     widgets.tiny_text(batt_voltage, 0, 40)
     widgets.tiny_text(ip, 0, 50)
     eink.show(widgets.img, partial=False)
+
+
+def show_qr_code(content):
+    widgets.clear()
+    widgets.qr_code(content)
+    eink.show(widgets.img, partial=True)
