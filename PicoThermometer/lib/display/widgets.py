@@ -57,14 +57,12 @@ class Widgets(Drawing):
 
         self.fill_rect(soc_x, y, soc, h, color)
 
-    def qr_code(self, content):
+    def qr_code(self, content, x, y, scale):
 
         qr = QRCode(border=0, box_size=10)
         qr.add_data(content)
         matrix = qr.get_matrix()
-        scale = 3
-        for y in range(len(matrix) * scale):                    # Scaling the bitmap by 2
-            for x in range(len(matrix[0]) * scale):             # because my screen is tiny.
-                value = not matrix[int(y / scale)][int(x / scale)]  # Inverting the values because
-                self.pixel(x, y, value)
-
+        for y_mat in range(len(matrix) * scale):                       # Scaling the bitmap by 2
+            for x_mat in range(len(matrix[0]) * scale):                # because my screen is tiny.
+                value = not matrix[int(y_mat / scale)][int(x_mat / scale)]  # Inverting the values because
+                self.pixel(x_mat+x, y_mat+y, value)

@@ -1,3 +1,5 @@
+import json
+
 
 SEEK_END = 2
 Settings = {"full_refresh_cadence": 10}
@@ -29,3 +31,25 @@ def save_value(value, filename):
     val_binary = val_unsigned.to_bytes(1, "big")
     with open(filename, "ab") as f:
         f.write(val_binary)
+
+
+def settings_load():
+    # default = {"widget": 0}
+    # try:
+    #     with open("settings.json", "r") as f:
+    #         settings = f.read()
+    # except OSError:
+    #     settings = default
+    # else:
+    #     settings = json.loads(settings)
+    with open("settings.json", "r") as f:
+        settings = f.read()
+        settings = json.loads(settings)
+    return settings
+
+
+def settings_save(settings):
+    settings = json.dumps(settings)
+    print(settings)
+    with open("settings.json", "w") as f:
+        f.write(settings)
