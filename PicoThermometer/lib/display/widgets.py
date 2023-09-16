@@ -44,3 +44,14 @@ class Widgets(Drawing):
 
         self.fill_rect(w-32, h, 33, 12, WHITE)
         self.tiny_text(str(values[-1]), w-31, h, color)
+
+    def battery_indicator(self, soc, x, y, color=BLACK):
+        w = 40
+        h = 15
+        self.rect(x, y, w, h, color)
+        self.fill_rect(x-4, y+4, 3, 7, color)
+
+        soc = int(w / 100 * soc)
+        soc_x = w - soc + x
+
+        self.fill_rect(soc_x, y, soc, h, color)

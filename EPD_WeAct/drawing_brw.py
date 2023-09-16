@@ -12,8 +12,8 @@ class Drawing:
     def __init__(self, background=WHITE):
         self.background = background
 
-        self.buffer_black = bytearray(HEIGHT_250 * WIDTH_128)
-        self.buffer_red = bytearray(HEIGHT_250 * WIDTH_128)
+        self.buffer_black = bytearray(HEIGHT_250 * WIDTH_128 // 8)
+        self.buffer_red = bytearray(HEIGHT_250 * WIDTH_128 // 8)
         self.canvas_black = framebuf.FrameBuffer(self.buffer_black, HEIGHT_250, WIDTH_128, framebuf.MONO_VLSB)
         self.canvas_red = framebuf.FrameBuffer(self.buffer_red, HEIGHT_250, WIDTH_128, framebuf.MONO_VLSB)
 

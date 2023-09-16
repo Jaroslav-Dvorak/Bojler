@@ -1,6 +1,6 @@
 import framebuf
-from writer import Writer
-import bigfont
+from lib.display.writer import Writer
+import lib.display.bigfont as bigfont
 from lib.display.epd_2in13_bw import HEIGHT, WIDTH, BOTTOM, TOP
 
 
@@ -10,7 +10,7 @@ BLACK = 0
 
 class Drawing:
     def __init__(self, background=WHITE):
-        self.img = bytearray(HEIGHT * WIDTH)
+        self.img = bytearray((HEIGHT * WIDTH)//8)
         self.canvas = framebuf.FrameBuffer(self.img, HEIGHT, WIDTH, framebuf.MONO_VLSB)
         self.background = background
         self.clear()

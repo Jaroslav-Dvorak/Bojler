@@ -17,3 +17,14 @@ def one_byte_to_num(one_byte_num, delimiter, offset):
     val = (one_byte_num+offset) / delimiter
     val = round(val, 1)
     return val
+
+
+def voltage_to_soc(voltage):
+    max_batt_volt = 4.20
+    min_batt_volt = 2.80
+    soc = int(((voltage - min_batt_volt) / (max_batt_volt - min_batt_volt)) * 100)
+    if soc > 100:
+        soc = 100
+    elif soc < 0:
+        soc = 0
+    return soc

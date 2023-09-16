@@ -31,5 +31,11 @@ TEMPER_ADC = ADC(4)
 # TEMP_SENS_2 = Pin(1)
 # TEMP_SENS_3 = Pin(2)
 
-# led
-LED = Pin('LED', Pin.OUT)
+# leds
+ONBOARD_LED = Pin('LED', Pin.OUT)
+GREEN_LED = Pin(22, Pin.OUT)
+
+# buttons
+BTN_1 = Pin(16, Pin.IN, Pin.PULL_UP)
+BTN_2 = Pin(17, Pin.IN, Pin.PULL_UP)
+BTN_3 = Pin(18, Pin.IN, Pin.PULL_UP)
