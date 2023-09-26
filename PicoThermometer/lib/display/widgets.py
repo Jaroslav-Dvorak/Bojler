@@ -1,6 +1,5 @@
 from lib.display.drawing_bw import Drawing, BLACK, WHITE
 from lib.display.epd_2in13_bw import SEEN_WIDTH, SEEN_HEIGHT
-from lib.display.uQR import QRCode
 
 
 class Widgets(Drawing):
@@ -58,11 +57,14 @@ class Widgets(Drawing):
         self.fill_rect(soc_x, y, soc, h, color)
 
     def qr_code(self, content, x, y, scale):
-
+        from lib.display.uQR import QRCode
         qr = QRCode(border=0, box_size=10)
         qr.add_data(content)
         matrix = qr.get_matrix()
-        for y_mat in range(len(matrix) * scale):                       # Scaling the bitmap by 2
-            for x_mat in range(len(matrix[0]) * scale):                # because my screen is tiny.
+        for y_mat in range(len(matrix) * scale):                            # Scaling the bitmap by 2
+            for x_mat in range(len(matrix[0]) * scale):                     # because my screen is tiny.
                 value = not matrix[int(y_mat / scale)][int(x_mat / scale)]  # Inverting the values because
                 self.pixel(x_mat+x, y_mat+y, value)
+
+    def wifi_indicator(self, x, y, strength, color=BLACK):
+        self.fill_circle(x, y, 30, color=color)

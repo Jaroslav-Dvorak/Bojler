@@ -140,12 +140,17 @@ class Epd2in13bw(SSD1680):
                 self.send_int_data(image[i + j * self.height])
 
     def save_display_data(self, image):
-        filesize = os.stat(self.filename)[6]
-        if filesize < self.max_display_filesize:
-            write_mode = "ab"
-        else:
+        try:
+            filesize = os.stat(self.filename)[6]
+        except OSError:
             write_mode = "wb"
             self.force_full_upd = True
+        else:
+            if filesize < self.max_display_filesize:
+                write_mode = "ab"
+            else:
+                write_mode = "wb"
+                self.force_full_upd = True
         with open(self.filename, write_mode) as f:
             f.write(image)
 

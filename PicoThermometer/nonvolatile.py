@@ -1,8 +1,7 @@
 import json
-
+from collections import OrderedDict
 
 SEEK_END = 2
-Settings = {"full_refresh_cadence": 10}
 
 
 def get_last_values(num_of_vals, filename, max_filesize=1024 * 100):
@@ -33,23 +32,39 @@ def save_value(value, filename):
         f.write(val_binary)
 
 
+Settings = OrderedDict([
+    ("WiFi-SSID", ""),
+    ("WiFi-passw", ""),
+    ("MQTT-brokr", ""),
+    ("MQTT-user", ""),
+    ("MQTT-passw", ""),
+    ("MQTT-topic", ""),
+    ("widget", 0)
+])
+# Settings = {
+#     "WiFi-SSID": "",
+#     "WiFi-passw": "",
+#     "MQTT-broker": "",
+#     "MQTT-user": "",
+#     "MQTT-passw": "",
+#     "MQTT-topic": "",
+#     "widget": 0,
+#             }
+
+
 def settings_load():
-    # default = {"widget": 0}
-    # try:
-    #     with open("settings.json", "r") as f:
-    #         settings = f.read()
-    # except OSError:
-    #     settings = default
-    # else:
-    #     settings = json.loads(settings)
-    with open("settings.json", "r") as f:
-        settings = f.read()
-        settings = json.loads(settings)
-    return settings
+    try:
+        with open("settings.json", "r") as f:
+            settings = f.read()
+            settings = json.loads(settings)
+    except Exception as e:
+        print(e)
+        return
+    else:
+        Settings.update(settings)
 
 
-def settings_save(settings):
-    settings = json.dumps(settings)
-    print(settings)
+def settings_save():
     with open("settings.json", "w") as f:
-        f.write(settings)
+        print(Settings)
+        f.write(json.dumps(Settings))

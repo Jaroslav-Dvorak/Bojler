@@ -68,27 +68,7 @@ class SSD1680:
         self.send_command(0x11)
         self.send_int_data(0b00000111)
 
-        # set Ram - X address start / end position
-        # self.send_command(0x44)
-        # self.send_int_data(0x00)
-        # self.send_int_data(self.width_end_byte)
-
-        # set Ram - Y address start / end position
-        # self.send_command(0x45)
-        # self.send_int_data(0x00)
-        # self.send_int_data(0x00)
-        # self.send_int_data(self.height_end_bit % 256)
-        # self.send_int_data(self.height_end_bit // 256)
         self._define_ram_area(0, 0, self.width-1, self.height-1)
-
-        # set RAM x address count to 0
-        # self.send_int_data(self.width_end_byte)
-        # self.send_command(0x4E)
-        #
-        # # set RAM y address count to 0X199;
-        # self.send_command(0x4F)
-        # self.send_int_data(0x00)
-        # self.send_int_data(0x00)
         self._set_ram_pointer(0, 0)
 
         # BorderWaveform
@@ -137,6 +117,3 @@ class SSD1680:
         # Activate Display Update Sequence
         self.send_command(0x20)
         self.wait_busy()
-
-
-

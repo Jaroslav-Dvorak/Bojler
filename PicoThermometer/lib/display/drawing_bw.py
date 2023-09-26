@@ -1,6 +1,6 @@
 import framebuf
-from lib.display.writer import Writer
-import lib.display.bigfont as bigfont
+# from lib.display.writer import Writer
+# import lib.display.bigfont as bigfont
 from lib.display.epd_2in13_bw import HEIGHT, WIDTH, BOTTOM, TOP
 
 
@@ -99,6 +99,8 @@ class Drawing:
 
     def large_text(self, string, x, y, color=BLACK):
         x -= 4
+        from lib.display.writer import Writer
+        import lib.display.bigfont as bigfont
         invert = not color
         writer_inst = Writer(self.canvas, WIDTH, HEIGHT, bigfont)
         writer_inst.fgcolor = color
