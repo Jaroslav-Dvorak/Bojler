@@ -41,7 +41,6 @@ def web_page():
             {forms}
           </body></html>
     """
-    print(Settings)
     return html.encode("utf-8")
 
 
@@ -81,7 +80,7 @@ def save_and_restart(_):
 def start_web():
     while not BTN_1.value():
         sleep_ms(200)
-    sleep_ms(500)
+    sleep_ms(2000)
     BTN_1.irq(trigger=machine.Pin.IRQ_FALLING, handler=save_and_restart)
     S.bind(('', 80))
     S.listen(5)

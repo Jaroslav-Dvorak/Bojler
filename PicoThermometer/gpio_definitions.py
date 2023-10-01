@@ -1,4 +1,4 @@
-from machine import Pin, ADC
+from machine import Pin, ADC, Signal
 from machine import SPI as Spi
 
 # display WeAct
@@ -37,5 +37,5 @@ GREEN_LED = Pin(22, Pin.OUT)
 
 # buttons
 BTN_1 = Pin(16, Pin.IN, Pin.PULL_UP)
-BTN_2 = Pin(17, Pin.IN, Pin.PULL_UP)
-BTN_3 = Pin(18, Pin.IN, Pin.PULL_UP)
+BTN_2 = Pin(18, Pin.IN, Pin.PULL_UP)
+BTN_3 = Pin(17, Pin.IN, Pin.PULL_UP)

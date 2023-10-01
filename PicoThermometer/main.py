@@ -1,60 +1,39 @@
-from utime import sleep
-import machine
-import lib.display.screens as screens
-import measurement
-from gpio_definitions import DONE_PIN, TEMPER_ADC, BATT_ADC, BTN_1, BTN_2, BTN_3, GREEN_LED
-from helpers import voltage_to_soc
-from lib.wifi.ap import start_ap, start_web
+from utime import sleep_ms
+from gpio_definitions import BTN_1, BTN_2, BTN_3, GREEN_LED, DONE_PIN
 from nonvolatile import Settings, settings_save, settings_load
+from measurement import Bat_voltage
+from lib.display import screens
 
-black = 0
-white = 1
-
-GREEN_LED.value(1)
 
 if __name__ == '__main__':
+    GREEN_LED.value(1)
+    if Bat_voltage < 2.8:
+        DONE_PIN.value(1)
     settings_load()
-    bat_voltage = measurement.measure_analog(BATT_ADC)
-    bat_voltage = round(bat_voltage * 2, 2)
-    bat_soc = voltage_to_soc(bat_voltage)
 
-    pref_widget = Settings["widget"]
+    device_run = True
     full_refresh = False
     if not BTN_1.value():
-        ap_ssid = "MYWIFITST"
-        ip = start_ap(ap_ssid)
-        screens.show_overview(bat_voltage, ip, ap_ssid)
-        start_web()
+        import modes.mode_setup
     elif not BTN_2.value():
-        if pref_widget == 0:
-            Settings["widget"] = 1
-        elif pref_widget == 1:
+        from modes.mode_testing import wifi_test_and_pub_discovery
+        device_run = wifi_test_and_pub_discovery()
+        GREEN_LED.value(0)
+        sleep_ms(10_000)
+        screens.widgets.clear()
+        screens.eink.show(screens.widgets.img, partial=False)
+        sleep_ms(1000)
+        screens.eink.deep_sleep()
+        DONE_PIN.value(1)
+        sleep_ms(1000)
+    elif not BTN_3.value():
+        Settings["widget"] += 1
+        if Settings["widget"] > 1:
             Settings["widget"] = 0
         settings_save()
-        sleep(0.5)
+        sleep_ms(1000)
         full_refresh = True
-    elif not BTN_3.value():
-        screens.show_qr_code(
-            'SPD*1.0*ACC:CZ2806000000000168540115*AM:450.00*CC:CZK*PT:IP*MSG:PLATBA ZA ZBOZI*X-VS:1234567890', 0, 0, 3)
-        DONE_PIN.value(1)
 
-    while True:
-        bat_voltage = measurement.measure_analog(BATT_ADC)
-        bat_voltage = round(bat_voltage * 2, 2)
-        bat_soc = voltage_to_soc(bat_voltage)
-
-        temper_onboard_voltage = measurement.measure_analog(TEMPER_ADC)
-        onboard_temperature = (27 - (temper_onboard_voltage - 0.706) / 0.001721)
-        onboard_temperature = round(onboard_temperature, 1)
-
-        if Settings["widget"] == 0:
-            screens.show_chart(onboard_temperature, bat_soc, full_refresh)
-        elif Settings["widget"] == 1:
-            screens.show_big_val(onboard_temperature, bat_soc, full_refresh)
-
-        GREEN_LED.value(0)
-        sleep(1)
-        DONE_PIN.value(1)
-        sleep(1)
-
-        full_refresh = False
+    if device_run:
+        from modes.mode_regular import measuring_onboard_temperature
+        measuring_onboard_temperature(full_refresh)

@@ -150,7 +150,7 @@ class Epd2in13bw(SSD1680):
                 write_mode = "ab"
             else:
                 write_mode = "wb"
-                self.force_full_upd = True
+                # self.force_full_upd = True
         with open(self.filename, write_mode) as f:
             f.write(image)
 

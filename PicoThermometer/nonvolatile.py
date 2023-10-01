@@ -28,8 +28,12 @@ def get_last_values(num_of_vals, filename, max_filesize=1024 * 100):
 def save_value(value, filename):
     val_unsigned = value + 127
     val_binary = val_unsigned.to_bytes(1, "big")
-    with open(filename, "ab") as f:
-        f.write(val_binary)
+    try:
+        with open(filename, "ab") as f:
+            f.write(val_binary)
+    except OSError:
+        with open(filename, "wb") as f:
+            f.write(val_binary)
 
 
 Settings = OrderedDict([
@@ -39,17 +43,9 @@ Settings = OrderedDict([
     ("MQTT-user", ""),
     ("MQTT-passw", ""),
     ("MQTT-topic", ""),
+    ("MQTT-uq_id", ""),
     ("widget", 0)
 ])
-# Settings = {
-#     "WiFi-SSID": "",
-#     "WiFi-passw": "",
-#     "MQTT-broker": "",
-#     "MQTT-user": "",
-#     "MQTT-passw": "",
-#     "MQTT-topic": "",
-#     "widget": 0,
-#             }
 
 
 def settings_load():

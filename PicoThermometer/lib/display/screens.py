@@ -84,5 +84,4 @@ def show_settings(settings, partial):
         text = f"{k:<10}: {v}"
         widgets.tiny_text(text, 0, i*10)
         i += 1
-
     eink.show(widgets.img, partial=partial)

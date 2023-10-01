@@ -1,6 +1,7 @@
 from lib.ds18x20 import DS18X20
 from lib.onewire import OneWire
 from time import sleep_ms
+from gpio_definitions import BATT_ADC
 
 
 def measure_analog(pin):
@@ -12,6 +13,9 @@ def measure_analog(pin):
         n += 1
     voltage = (measured / num_of_measurements) * (3.3 / 65535)
     return voltage
+
+
+Bat_voltage = round(measure_analog(BATT_ADC)*2 + 0.465, 2)
 
 
 class MeasureOnewire:
