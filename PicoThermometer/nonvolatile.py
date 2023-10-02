@@ -42,8 +42,7 @@ Settings = OrderedDict([
     ("MQTT-brokr", ""),
     ("MQTT-user", ""),
     ("MQTT-passw", ""),
-    ("MQTT-topic", ""),
-    ("MQTT-uq_id", ""),
+    ("MQTT-name", ""),
     ("widget", 0)
 ])
 

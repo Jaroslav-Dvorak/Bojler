@@ -1,6 +1,7 @@
 from utime import sleep_ms, time
 from lib.display import screens
 from gpio_definitions import DONE_PIN
+from lib.wifi.ha import MQTT, send_discovery
 
 from nonvolatile import Settings
 import network
@@ -16,8 +17,55 @@ WIFI_STATUS = {
     network.STAT_GOT_IP: "GOT_IP"
 }
 
-discovery_msg = "discoverymsg"
-discovery_tpc = "thedisctopic"
+MQTT_ERRS = {
+    1: "ECONCLOSE",
+    2: "EREADLEN",
+    3: "EWRITELEN",
+    4: "ESTRTOLONG",
+    6: "ERESPONSE",
+    7: "EKEEPALIVE",
+    8: "ENOCON",
+
+    20: "ECONUNKNOWN",
+    21: "ECONPROTOCOL",
+    22: "ECONREJECT",
+    23: "ECONUNAVAIBLE",
+    24: "ECONCREDENTIALS",
+    25: "ECONAUTH",
+    28: "ECONNOT",
+    29: "ECONLENGTH",
+    30: "ECONTIMEOUT",
+
+    40: "ESUBACKUNKNOWN",
+    41: "ESUBACKFAIL"
+}
+
+ECONCLOSE = 1   # Connection closed by host
+EREADLEN = 2    # Wrong length of read data
+EWRITELEN = 3   # Wrong length of write data
+ESTRTOLONG = 4  # String too long !!!!
+ERESPONSE = 6   # Wrong response
+EKEEPALIVE = 7  # Connection keep time has been exceeded (umqtt.robust2)
+ENOCON = 8      # No connection
+
+ECONUNKNOWN = 20     # Connection refused, unknown error
+ECONPROTOCOL = 21    # Connection refused, unacteptable protocol version
+ECONREJECT = 22      # Connection refused, identifier rejected
+ECONUNAVAIBLE = 23   # Connection refused, server unavaible
+ECONCREDENTIALS = 24 # Connection refused, bad credentials
+ECONAUTH = 25        # Connection refused, not authorized
+ECONNOT = 28         # No connection
+ECONLENGTH = 29      # Connection, control packet type, Remaining Length != 2
+ECONTIMEOUT = 30     # Connection timeout
+
+ESUBACKUNKNOWN = 40  # Subscribe confirm unknown fail, SUBACK
+ESUBACKFAIL = 44     # Subscribe confirm response: Failure
+
+# Status code numbers from set_callback_status()
+STIMEOUT = 0    # timeout
+SDELIVERED = 1  # successfully delivered
+SUNKNOWNPID = 2 # Unknown PID. It is also possible that the PID is outdated,
+                # i.e. it came out of the message timeout.
 
 
 def text_row(text, row):
@@ -46,14 +94,14 @@ def wifi_test_and_pub_discovery():
         text_row("Device is turning off.", 2)
         return
 
-    from lib.wifi import sta
+    from lib.wifi.sta import STA
 
     text_row(f"Connecting to '{ssid}'.", 1)
     start_time = time()
     try_time_s = 10
-    while sta.STA.status() != network.STAT_GOT_IP:
+    while STA.status() != network.STAT_GOT_IP:
         erase_row(2)
-        status = WIFI_STATUS.get(sta.STA.status(), "UNKNOWN STATUS")
+        status = WIFI_STATUS.get(STA.status(), "UNKNOWN STATUS")
         text_row(status, 2)
         sleep_ms(10)
         if time() > start_time+try_time_s:
@@ -62,18 +110,19 @@ def wifi_test_and_pub_discovery():
             return
     else:
         erase_row(2)
-        status = WIFI_STATUS.get(sta.STA.status(), "UNKNOWN STATUS")
+        status = WIFI_STATUS.get(STA.status(), "UNKNOWN STATUS")
         text_row(status, 2)
-        text_row("WiFi connected.", 3)
+        rssi = STA.status("rssi")
+        text_row(f"WiFi connected, rssi:{rssi}dBm", 3)
 
     sleep_ms(200)
 
     text_row(f"MQTT connecting {mqtt}", 4)
     try:
-        sta.MQTT.connect()
+        MQTT.connect()
         text_row("MQTT connected", 5)
     except Exception as e:
-        sta.STA.disconnect()
+        STA.disconnect()
         text_row(str(e), 5)
         text_row("Device is turning off.", 6)
         sleep_ms(1000)
@@ -82,23 +131,22 @@ def wifi_test_and_pub_discovery():
     sleep_ms(200)
 
     try:
-        sta.MQTT.publish(discovery_tpc, discovery_msg, qos=1)
+        send_discovery(name="temperature", unit="C", device_class="temperature")
+        send_discovery(name="soc", unit="%", device_class="battery")
+        send_discovery(name="signal", unit="dBm", device_class="signal_strength")
         text_row("MQTT HA discovery published", 6)
     except Exception as e:
-        sta.STA.disconnect()
-        text_row(e, 5)
+        STA.disconnect()
+        e = int(str(e))
+        e = MQTT_ERRS.get(e, "UNKNOWN ERROR")
+        text_row(e, 6)
+        text_row("Device is turning off.", 7)
         sleep_ms(1000)
         return
 
     text_row("Everything OK.", 7)
-    text_row("Device is turning off.", 8)
-    sta.STA.disconnect()
+    MQTT.disconnect()
+    sleep_ms(100)
+    STA.disconnect()
     sleep_ms(1000)
-
-
-# screens.show_qr_code(
-#             'SPD*1.0*ACC:CZ2806000000000168540115*AM:450.00*CC:CZK*PT:IP*MSG:PLATBA ZA ZBOZI*X-VS:1234567890', 0, 0, 3
-# )
-#
-
-# DONE_PIN.value(1)
+    text_row("Device is turning off.", 8)

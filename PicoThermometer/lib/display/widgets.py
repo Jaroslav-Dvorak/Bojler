@@ -18,11 +18,6 @@ class Widgets(Drawing):
         for thick in range(thickness):
             self.line(x+thick, y, x+thick, h, color)  # left vertical
 
-        self.fill_rect(x+3, h, 20, 12, WHITE)
-        self.tiny_text(str(maximum), x+5, h, color)
-        self.fill_rect(x+3, y-11, 20, 12, WHITE)
-        self.tiny_text(str(minimum), x+5, y-8, color)
-
         spread = 1
         for index, _ in enumerate(optimized_values, start=1):
             try:
@@ -42,14 +37,19 @@ class Widgets(Drawing):
                 for thick in range(thickness):
                     self.line(x1, y1+thick, x2, y2+thick, color)
 
+        self.fill_rect(x+3, h, 20, 12, WHITE)
+        self.tiny_text(str(maximum), x+5, h, color)
+        self.fill_rect(x+3, y-11, 20, 12, WHITE)
+        self.tiny_text(str(minimum), x+5, y-8, color)
+
         self.fill_rect(w-32, h, 33, 12, WHITE)
         self.tiny_text(str(values[-1]), w-31, h, color)
 
     def battery_indicator(self, soc, x, y, color=BLACK):
-        w = 40
-        h = 15
+        w = 30
+        h = 9
         self.rect(x, y, w, h, color)
-        self.fill_rect(x-4, y+4, 3, 7, color)
+        self.fill_rect(x-4, y+2, 3, 5, color)
 
         soc = int(w / 100 * soc)
         soc_x = w - soc + x
