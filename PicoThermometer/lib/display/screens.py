@@ -4,38 +4,28 @@ import gc
 from lib.display.widgets import Widgets
 from lib.display.epd_2in13_bw import Epd2in13bw
 from gpio_definitions import BUSY_PIN, RST_PIN, DC_PIN, CS_PIN, SPI
-import nonvolatile
-from helpers import num_to_one_byte, one_byte_to_num, ONBOARD_TEMP_CONV_TO_BYTE
 
 widgets = Widgets()
 eink = Epd2in13bw(BUSY_PIN, RST_PIN, DC_PIN, CS_PIN, SPI)
 
 
-def show_chart(chart_val, batt_soc, full_refresh=False):
-    filesize, values = nonvolatile.get_last_values(249, "temperatures.dat")
-    one_byte_chart_val = num_to_one_byte(chart_val, *ONBOARD_TEMP_CONV_TO_BYTE)
-    nonvolatile.save_value(one_byte_chart_val, "temperatures.dat")
-    values = [one_byte_to_num(temp, *ONBOARD_TEMP_CONV_TO_BYTE) for temp in values]
-
+def show_chart(values, minimum, maximum, batt_soc, full_refresh=False):
     batt_coor = 150, 0
-    values.append(chart_val)
     if len(values) > 250:
         values.pop(0)
     widgets.clear()
-    widgets.chart(values, minimum=15, maximum=35)
+    widgets.chart(values, minimum, maximum)
     widgets.battery_indicator(batt_soc, *batt_coor)
 
     eink.show(widgets.img, partial=not full_refresh)
 
 
-def show_big_val(value, battery_soc, full_refresh=False):
-    one_byte_chart_val = num_to_one_byte(value, *ONBOARD_TEMP_CONV_TO_BYTE)
-    nonvolatile.save_value(one_byte_chart_val, "temperatures.dat")
+def show_big_val(curr_val, battery_soc, full_refresh=False):
 
     value_coor = 5, 25
     batt_coor = 210, 0
     widgets.clear()
-    widgets.large_text(str(value), *value_coor)
+    widgets.large_text(str(curr_val), *value_coor)
     widgets.battery_indicator(battery_soc, *batt_coor)
     eink.show(widgets.img, partial=not full_refresh)
 
@@ -85,3 +75,15 @@ def show_settings(settings, partial):
         widgets.tiny_text(text, 0, i*10)
         i += 1
     eink.show(widgets.img, partial=partial)
+
+
+def text_row(text, row):
+    row = (row-1)*10
+    widgets.fill_rect(x=0, y=row, w=eink.height, h=8, color=1)
+    widgets.tiny_text(text, 0, row)
+    eink.show(widgets.img, partial=True)
+
+
+def clear_display():
+    widgets.clear()
+    eink.show(widgets.img, partial=False)

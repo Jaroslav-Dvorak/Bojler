@@ -1,6 +1,4 @@
 import framebuf
-# from lib.display.writer import Writer
-# import lib.display.bigfont as bigfont
 from lib.display.epd_2in13_bw import HEIGHT, WIDTH, BOTTOM, TOP
 
 

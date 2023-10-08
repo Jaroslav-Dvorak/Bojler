@@ -6,7 +6,7 @@ class Widgets(Drawing):
     def __init__(self):
         super().__init__()
 
-    def chart(self, values, maximum, minimum, color=BLACK):
+    def chart(self, values, minimum, maximum, color=BLACK):
         x = 0
         y = SEEN_WIDTH-1
         w = SEEN_HEIGHT-1
@@ -55,6 +55,24 @@ class Widgets(Drawing):
         soc_x = w - soc + x
 
         self.fill_rect(soc_x, y, soc, h, color)
+
+    def signal_indicator(self, rssi, x, y, color=BLACK):
+        w = 3
+        h = 9
+        w_space = 1
+        if rssi is not None:
+            num_of_filled = ((rssi+100)/7.5)
+        else:
+            num_of_filled = 0
+            # self.line(x, y, x+(w+w_space)*4, h-y)
+        for i in range(1, 5):
+            _h = i*2 + 1
+            _x = x + (w+w_space)*i
+            _y = y - _h - 1
+            if num_of_filled > i:
+                self.fill_rect(_x, _y, w, _h)
+            else:
+                self.rect(_x, _y, w, _h)
 
     def qr_code(self, content, x, y, scale):
         from lib.display.uQR import QRCode

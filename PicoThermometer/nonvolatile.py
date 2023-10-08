@@ -15,7 +15,7 @@ def get_last_values(num_of_vals, filename, max_filesize=1024 * 100):
             else:
                 f.seek(-num_of_vals, SEEK_END)
                 values_binary = f.read(num_of_vals)
-            values = [vb-127 for vb in values_binary]
+            values = [vb for vb in values_binary]
     except OSError:
         return 0, []
 
@@ -26,7 +26,7 @@ def get_last_values(num_of_vals, filename, max_filesize=1024 * 100):
 
 
 def save_value(value, filename):
-    val_unsigned = value + 127
+    val_unsigned = value
     val_binary = val_unsigned.to_bytes(1, "big")
     try:
         with open(filename, "ab") as f:
