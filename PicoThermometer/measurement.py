@@ -1,7 +1,8 @@
 from lib.ds18x20 import DS18X20
 from lib.onewire import OneWire
 from time import sleep_ms
-from gpio_definitions import BATT_ADC
+from gpio_definitions import BATT_ADC, DALLAS, TEMPER_ADC
+from nonvolatile import Settings
 
 
 def measure_analog(pin):
@@ -15,71 +16,33 @@ def measure_analog(pin):
     return voltage
 
 
-Bat_voltage = round(measure_analog(BATT_ADC)*2 + 0.465, 2)
+def batt_voltage():
+    return round(measure_analog(BATT_ADC)*2 + 0.465, 2)
+def voltage_to_soc(voltage):
+    max_batt_volt = 4.20
+    min_batt_volt = 2.80
+    soc = int(((voltage - min_batt_volt) / (max_batt_volt - min_batt_volt)) * 100)
+    soc = max(0, min(soc, 100))
+    return soc
 
 
-class MeasureOnewire:
-    def __init__(self, pin, rom):
-        self.ds_sensor = DS18X20(OneWire(pin))
-        self.rom = rom
-
-    def convert(self):
-        tries = 0
-        while tries < 100:
-            try:
-                self.ds_sensor.convert_temp()
-            except Exception as e:
-                print(e)
-            tries += 1
-
-    def get_temp(self):
-        tries = 0
-        temp = None
-        while tries < 100:
-            tries += 1
-            try:
-                temp = self.ds_sensor.read_temp(self.rom)
-            except Exception as e:
-                print(e)
-                continue
-
-            if temp is None or temp == 85.0:
-                continue
-            else:
-                break
-        return temp
+def onboard_temperature():
+    temper_onboard_voltage = measure_analog(TEMPER_ADC)
+    temperature = (27 - (temper_onboard_voltage - 0.706) / 0.001721)
+    temperature = round(temperature, 1)
+    return temperature
 
 
-def measure_onewire(pin):
-    ds_sensor = DS18X20(OneWire(pin))
-
-    tries = 0
-    while True:
-        if tries > 100:
-            return None
-
-        tries += 1
-        temp = None
-        roms = ds_sensor.scan()
-        if len(roms) == 0:
-            print("no rom found")
-            continue
-        try:
-            ds_sensor.convert_temp()
-        except Exception as e:
-            print(e)
-            continue
-
+def measure_dallas():
+    ds_sensor = DS18X20(OneWire(DALLAS))
+    rom = Settings["dallas_sens"]
+    rom = bytes.fromhex(rom)
+    try:
+        ds_sensor.convert_temp()
         sleep_ms(750)
-
-        for rom in roms:
-            try:
-                temp = ds_sensor.read_temp(rom)
-            except Exception as e:
-                print(e)
-                continue
-
-        if temp is None or temp == 85.0:
-            continue
-
-        return temp
+        temp = ds_sensor.read_temp(rom)
+    except Exception as e:
+        print(e)
+        return False
+    else:
+        return round(temp, 1)

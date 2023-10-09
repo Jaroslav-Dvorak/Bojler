@@ -1,9 +1,8 @@
 from lib.wifi.ap import start_ap, start_web
 from lib.display import screens
-from measurement import Bat_voltage
 
 
-def start_setup(ap_ssid):
+def start_setup(ap_ssid, batt_voltage):
     ip = start_ap(ap_ssid)
-    screens.show_overview(Bat_voltage, ip, ap_ssid)
+    screens.show_overview(batt_voltage, ip, ap_ssid)
     start_web()

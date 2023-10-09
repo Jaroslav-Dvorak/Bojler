@@ -4,6 +4,17 @@ from collections import OrderedDict
 SEEK_END = 2
 
 
+def num_to_byte(num, minimum, maximum):
+    num = max(minimum, min(num, maximum))
+    byte = int(((num - minimum) / (maximum - minimum)) * 256)
+    byte = max(0, min(byte, 255))
+    return byte
+def byte_to_num(byte, minimum, maximum):
+    byte = max(0, min(byte, 255))
+    num = minimum + (byte / 255) * (maximum - minimum)
+    return num
+
+
 def get_last_values(num_of_vals, filename, max_filesize=1024 * 100):
     try:
         with open(filename, "rb") as f:
@@ -43,7 +54,8 @@ Settings = OrderedDict([
     ("MQTT-user", ""),
     ("MQTT-passw", ""),
     ("MQTT-name", ""),
-    ("widget", 0)
+    ("widget", 0),
+    ("dallas_sens", "")
 ])
 
 

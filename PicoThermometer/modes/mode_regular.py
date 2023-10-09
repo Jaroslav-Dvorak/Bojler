@@ -1,21 +1,19 @@
 import lib.display.screens as screens
-from gpio_definitions import TEMPER_ADC
 import measurement
-from helpers import voltage_to_soc, num_to_byte, byte_to_num
-from nonvolatile import Settings, save_value, get_last_values
+from nonvolatile import Settings, save_value, get_last_values, num_to_byte, byte_to_num
 
 
-def measuring_onboard_temperature(full_refresh, minimum=15, maximum=35):
-    bat_soc = voltage_to_soc(measurement.Bat_voltage)
+def load_show_save(full_refresh, bat_soc, minimum=15, maximum=35):
+    minimum = 0
+    maximum = 80
 
-    temper_onboard_voltage = measurement.measure_analog(TEMPER_ADC)
-    onboard_temperature = (27 - (temper_onboard_voltage - 0.706) / 0.001721)
-    onboard_temperature = round(onboard_temperature, 1)
+    # value = measurement.onboard_temperature()
+    value = measurement.measure_dallas()
 
     filesize, byte_values = get_last_values(249, "temperatures.dat")
 
-    values = [byte_to_num(value, minimum, maximum) for value in byte_values]
-    values.append(onboard_temperature)
+    values = [byte_to_num(val, minimum, maximum) for val in byte_values]
+    values.append(value)
 
     if full_refresh or filesize % 50 == 0:
         full_refresh = True
@@ -23,9 +21,9 @@ def measuring_onboard_temperature(full_refresh, minimum=15, maximum=35):
     if Settings["widget"] == 0:
         screens.show_chart(values, minimum, maximum, bat_soc, full_refresh)
     elif Settings["widget"] == 1:
-        screens.show_big_val(onboard_temperature, bat_soc, full_refresh)
+        screens.show_big_val(value, bat_soc, full_refresh)
 
-    one_byte_value = num_to_byte(onboard_temperature, minimum, maximum)
+    one_byte_value = num_to_byte(value, minimum, maximum)
     save_value(one_byte_value, "temperatures.dat")
 
-    return onboard_temperature, bat_soc
+    return value

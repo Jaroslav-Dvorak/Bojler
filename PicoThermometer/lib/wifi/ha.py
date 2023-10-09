@@ -12,8 +12,9 @@ MQTT = MQTTClient(client_id=BOARD_ID,
                   port=1883,
                   user=Settings["MQTT-user"],
                   password=Settings["MQTT-passw"],
-                  keepalive=7200,
-                  ssl=False
+                  keepalive=60,
+                  ssl=False,
+                  socket_timeout=None
                   )
 
 
@@ -34,16 +35,15 @@ def send_discovery(name, unit, device_class):
               "unique_id": name+BOARD_ID,
               "device_class": device_class
               }
-    msg = json.dumps(config)
-    msg = msg.encode(msg, "utf-8")
+    msg = json.dumps(config).encode("utf-8")
     MQTT.publish(topic, msg, retain=True, qos=1)
 
 
 def send_state(**kwargs):
     try:
-        topic = f"{DEVICE_NAME}/sensor"
+        topic = f"{DEVICE_NAME}/sensor".encode("utf-8")
         payload = kwargs
-        msg = json.dumps(payload)
+        msg = json.dumps(payload).encode("utf-8")
         MQTT.publish(topic, msg, retain=False, qos=1)
     except Exception as e:
         print(e)

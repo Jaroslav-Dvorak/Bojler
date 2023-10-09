@@ -21,7 +21,6 @@ def show_chart(values, minimum, maximum, batt_soc, full_refresh=False):
 
 
 def show_big_val(curr_val, battery_soc, full_refresh=False):
-
     value_coor = 5, 25
     batt_coor = 210, 0
     widgets.clear()
