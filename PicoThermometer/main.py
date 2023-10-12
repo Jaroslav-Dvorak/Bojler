@@ -24,7 +24,7 @@ if __name__ == '__main__':
     elif not BTN_2.value():
         import modes.mode_testing as testing
         screens.clear_display()
-        if testing.dallas_scan():
+        if testing.sensor_scan():
             if testing.check_settings():
                 if testing.check_wifi():
                     sleep_ms(100)

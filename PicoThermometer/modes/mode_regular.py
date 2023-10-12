@@ -1,14 +1,16 @@
 import lib.display.screens as screens
-import measurement
+import sensor
 from nonvolatile import Settings, save_value, get_last_values, num_to_byte, byte_to_num
 
 
 def load_show_save(full_refresh, bat_soc, minimum=15, maximum=35):
     minimum = 0
-    maximum = 80
+    maximum = 70
 
     # value = measurement.onboard_temperature()
-    value = measurement.measure_dallas()
+    # value = measurement.measure_dallas()
+    values = sensor.get_values()
+    value = list(values.items())[0][1]
 
     filesize, byte_values = get_last_values(249, "temperatures.dat")
 

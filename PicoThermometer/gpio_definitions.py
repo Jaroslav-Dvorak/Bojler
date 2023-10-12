@@ -26,9 +26,6 @@ DONE_PIN = Pin(0, Pin.OUT)
 BATT_ADC = ADC(28)
 TEMPER_ADC = ADC(4)
 
-# dallas
-DALLAS = Pin(19)
-
 # leds
 ONBOARD_LED = Pin('LED', Pin.OUT)
 GREEN_LED = Pin(22, Pin.OUT)

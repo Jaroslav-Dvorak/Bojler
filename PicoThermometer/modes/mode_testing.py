@@ -2,9 +2,7 @@ from utime import sleep_ms, time
 from lib.display.screens import text_row
 from lib.wifi.ha import MQTT, send_discovery
 from lib.wifi.sta import STA, wifi_connect
-from lib.ds18x20 import DS18X20
-from lib.onewire import OneWire
-from gpio_definitions import DALLAS
+from sensor import get_serial
 
 from nonvolatile import Settings, settings_save
 import network
@@ -46,22 +44,16 @@ MQTT_ERRS = {
 Continue_message = "Press any button..."
 
 
-def dallas_scan():
-    ds_sensor = DS18X20(OneWire(DALLAS))
-    tries = 0
-    while True:
-        if tries > 100:
-            text_row("Sensor not found", 1)
-            return False
-        tries += 1
-        roms = ds_sensor.scan()
-        if len(roms) > 0:
-            rom = ''.join([byte.to_bytes(1, 'big').hex() for byte in roms[0]])
-            text_row(f"Sensor found: {rom}", 1)
-            Settings["dallas_sens"] = rom
-            settings_save()
-            sleep_ms(1000)
-            return True
+def sensor_scan():
+    serial = get_serial()
+    if serial:
+        text_row(f"Sensor found: {serial}", 1)
+        Settings["dallas_sens"] = serial
+        settings_save()
+        sleep_ms(1000)
+        return True
+    else:
+        text_row("Sensor not found", 1)
 
 
 def check_settings():

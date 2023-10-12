@@ -1,7 +1,8 @@
 from lib.ds18x20 import DS18X20
 from lib.onewire import OneWire
+from lib.scd4x import SCD4X
 from time import sleep_ms
-from gpio_definitions import BATT_ADC, DALLAS, TEMPER_ADC
+from gpio_definitions import BATT_ADC, TEMPER_ADC
 from nonvolatile import Settings
 
 
@@ -33,16 +34,22 @@ def onboard_temperature():
     return temperature
 
 
-def measure_dallas():
-    ds_sensor = DS18X20(OneWire(DALLAS))
-    rom = Settings["dallas_sens"]
-    rom = bytes.fromhex(rom)
-    try:
-        ds_sensor.convert_temp()
-        sleep_ms(750)
-        temp = ds_sensor.read_temp(rom)
-    except Exception as e:
-        print(e)
-        return False
-    else:
-        return round(temp, 1)
+# def measure_dallas():
+#     ds_sensor = DS18X20(OneWire(DALLAS))
+#     rom = Settings["dallas_sens"]
+#     rom = bytes.fromhex(rom)
+#     try:
+#         ds_sensor.convert_temp()
+#         sleep_ms(750)
+#         temp = ds_sensor.read_temp(rom)
+#     except Exception as e:
+#         print(e)
+#         return False
+#     else:
+#         return round(temp, 1)
+#
+#
+# def measure_scd4x():
+#     scd4x = SCD4X(I2C)
+#     scd4x.measure_single_shot()
+#     return scd4x.co2
