@@ -1,5 +1,3 @@
-from time import sleep_ms
-from collections import OrderedDict
 
 # _____________________DS18X20_____________________________________________________
 # from lib.ds18x20 import DS18X20
@@ -51,39 +49,44 @@ from collections import OrderedDict
 
 from lib.scd4x import SCD4X
 from machine import I2C, Pin
-I2C_NUM = 0
-SCL_PIN_I2C = Pin(9)
-SDA_PIN_I2C = Pin(8)
-I2c = I2C(I2C_NUM, scl=SCL_PIN_I2C, sda=SDA_PIN_I2C, freq=400_000)
 
 
-scd4x = SCD4X(I2c)
-sensor_settings = OrderedDict()
-sensor_settings["Altitude"] = scd4x.altitude
+i2c_id = 0
+i2c = I2C(i2c_id, scl=Pin(9), sda=Pin(8), freq=400_000)
+sensor = SCD4X(i2c_bus=i2c)
+
+# scd4x = SCD4X(I2c)
+
+# sensor_settings = OrderedDict()
+# sensor_settings["Altitude"] = scd4x.altitude
 
 
-def get_serial():
-    serial_number = scd4x.serial_number
-    if not all(not v for v in serial_number):
-        return serial_number
-    else:
-        return False
+# def get_serial():
+#     serial_number = scd4x.serial_number
+#     if not all(not v for v in serial_number):
+#         return serial_number
+#     else:
+#         return False
 
 
-def get_values():
-    print("ahoj")
-    scd4x.measure_single_shot()
-    values = OrderedDict()
-    values["co2"] = scd4x.CO2
-    values["temperature"] = scd4x.temperature
-    values["humidity"] = scd4x.relative_humidity
-    return values
+# def get_values():
+#     global scd4x
+#     scd4x.measure_single_shot()
+#     values = OrderedDict()
+#     values["co2"] = scd4x.co2
+#     values["temperature"] = scd4x.temperature
+#     values["humidity"] = scd4x.relative_humidity
+#
+#     # values["co2"] = 0
+#     # values["temperature"] = 0
+#     # values["humidity"] = 0
+#     return values
 
 
-def get_range():
-    return 400, 5000
-
-
-def setup_sensor():
-    from nonvolatile import Settings
-    scd4x.altitude = Settings["Altitude"]
+# def get_range():
+#     return 400, 5000
+#
+#
+# def setup_sensor():
+#     from nonvolatile import Settings
+#     scd4x.altitude = Settings["Altitude"]

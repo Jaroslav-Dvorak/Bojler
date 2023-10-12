@@ -1,9 +1,4 @@
-from lib.ds18x20 import DS18X20
-from lib.onewire import OneWire
-from lib.scd4x import SCD4X
-from time import sleep_ms
 from gpio_definitions import BATT_ADC, TEMPER_ADC
-from nonvolatile import Settings
 
 
 def measure_analog(pin):
