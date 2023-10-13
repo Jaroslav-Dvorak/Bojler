@@ -3,10 +3,10 @@ import os
 import gc
 from lib.display.widgets import Widgets
 from lib.display.epd_2in13_bw import Epd2in13bw
-from gpio_definitions import BUSY_PIN, RST_PIN, DC_PIN, CS_PIN, SPI
+from gpio_definitions import BUSY_PIN, RST_PIN, DC_PIN, CS_PIN, SPI_DISPLAY
 
 widgets = Widgets()
-eink = Epd2in13bw(BUSY_PIN, RST_PIN, DC_PIN, CS_PIN, SPI)
+eink = Epd2in13bw(BUSY_PIN, RST_PIN, DC_PIN, CS_PIN, SPI_DISPLAY)
 
 
 def show_chart(values, minimum, maximum, batt_soc, full_refresh=False):

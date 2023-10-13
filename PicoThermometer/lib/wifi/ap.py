@@ -1,10 +1,11 @@
 import usocket as socket
 import network
-from lib.display.screens import show_settings
+from lib.display.screens import show_settings, clear_display
 from nonvolatile import Settings, settings_save
 from utime import sleep_ms
 from gpio_definitions import BTN_1
 import machine
+from sensor import sensor
 
 AP = network.WLAN(network.AP_IF)
 S = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -72,6 +73,8 @@ def save_and_restart(_):
     global Done
     if not Done:
         settings_save()
+        sensor.setup_sensor()
+        clear_display()
         sleep_ms(1000)
         machine.reset()
     Done = True

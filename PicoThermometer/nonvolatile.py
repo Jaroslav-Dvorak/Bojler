@@ -1,5 +1,6 @@
 import json
 from collections import OrderedDict
+from sensor import sensor
 
 SEEK_END = 2
 
@@ -47,20 +48,8 @@ def save_value(value, filename):
             f.write(val_binary)
 
 
-# Settings = OrderedDict([
-#     ("Altitude", 0),
-#     ("WiFi-SSID", ""),
-#     ("WiFi-passw", ""),
-#     ("MQTT-brokr", ""),
-#     ("MQTT-user", ""),
-#     ("MQTT-passw", ""),
-#     ("MQTT-name", ""),
-#     ("widget", 0)
-#     # ("dallas_sens", "")
-# ])
-
 Settings = OrderedDict()
-# Settings.update(sensor.get_setup())
+Settings.update(sensor.params)
 Settings["WiFi-SSID"] = ""
 Settings["WiFi-passw"] = ""
 Settings["MQTT-brokr"] = ""

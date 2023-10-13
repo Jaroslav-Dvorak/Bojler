@@ -7,6 +7,7 @@ from time import sleep_ms
 from gpio_definitions import BTN_1, BTN_2, BTN_3, GREEN_LED, DONE_PIN
 from measurement import batt_voltage, voltage_to_soc
 from lib.display import screens
+from sensor import sensor
 
 
 if __name__ == '__main__':
@@ -49,7 +50,7 @@ if __name__ == '__main__':
         mqtt_payload = {}
         from modes.mode_regular import load_show_save
         while True:
-            value = load_show_save(full_refresh, bat_soc)
+            value = load_show_save(full_refresh, bat_soc, sensor)
             mqtt_payload["soc"] = bat_soc
             rssi = None
             if wifi_active:

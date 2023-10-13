@@ -206,9 +206,9 @@ class SCD4X:
         return crc & 0xFF  # return the bottom 8 bits
 
     def get_serial(self):
-        serial_number = self.serial_number
+        serial_number = [str(sn) for sn in self.serial_number]
         if not all(not v for v in serial_number):
-            return serial_number
+            return "".join(serial_number)
         else:
             return False
 
@@ -218,20 +218,14 @@ class SCD4X:
         values["co2"] = self.co2
         values["temperature"] = self.temperature
         values["humidity"] = self.relative_humidity
-
-        # values["co2"] = 0
-        # values["temperature"] = 0
-        # values["humidity"] = 0
         return values
-    #
-    # def get_range(self):
-    #     return 400, 5000
 
-    # def setup_sensor(self):
-    #     from nonvolatile import Settings
-    #     self.altitude = Settings["Altitude"]
-    #
-    # def get_setup(self):
-    #     sensor_settings = OrderedDict()
-    #     sensor_settings["Altitude"] = self.altitude
-    #     return sensor_settings
+    def setup_sensor(self):
+        from nonvolatile import Settings
+        self.altitude = int(Settings["Altitude"])
+
+    @property
+    def params(self):
+        sensor_settings = OrderedDict()
+        sensor_settings["Altitude"] = self.altitude
+        return sensor_settings

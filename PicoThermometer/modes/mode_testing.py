@@ -2,7 +2,7 @@ from utime import sleep_ms, time
 from lib.display.screens import text_row
 from lib.wifi.ha import MQTT, send_discovery
 from lib.wifi.sta import STA, wifi_connect
-from sensor import get_serial
+from sensor import sensor
 
 from nonvolatile import Settings, settings_save
 import network
@@ -45,7 +45,7 @@ Continue_message = "Press any button..."
 
 
 def sensor_scan():
-    serial = get_serial()
+    serial = sensor.get_serial()
     if serial:
         text_row(f"Sensor found: {serial}", 1)
         Settings["dallas_sens"] = serial

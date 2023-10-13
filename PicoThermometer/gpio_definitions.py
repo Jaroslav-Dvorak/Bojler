@@ -1,5 +1,5 @@
-from machine import Pin, ADC
-from machine import SPI as Spi
+from machine import Pin, ADC, SPI
+
 
 # display WeAct
 # 1 Busy    purple
@@ -17,7 +17,10 @@ CS_PIN = Pin(13, Pin.OUT)
 SCL_PIN = Pin(14)  # SCL=SCK
 SDA_PIN = Pin(15)  # SDA=MOSI
 SPI_NUM = 1
-SPI = Spi(SPI_NUM, baudrate=1_000_000, sck=SCL_PIN, mosi=SDA_PIN)
+SPI_DISPLAY = SPI(SPI_NUM, baudrate=1_000_000, sck=SCL_PIN, mosi=SDA_PIN)
+# DEFAULT SPI DECLARATION:
+# SPI0 - sck=Pin(18), mosi=Pin(19), miso=Pin(16)
+# SPI1 - sck=Pin(10), mosi=Pin(11), miso=Pin(8)
 
 # tp5110
 DONE_PIN = Pin(0, Pin.OUT)
