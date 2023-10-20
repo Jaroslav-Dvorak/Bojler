@@ -43,6 +43,7 @@ class SCD4X:
         self._relative_humidity = None
         self._co2 = None
 
+        self._settings = {"Altitude": None}
         self.displ_min = 400
         self.displ_max = 5000
 
@@ -205,7 +206,8 @@ class SCD4X:
                     crc = crc << 1
         return crc & 0xFF  # return the bottom 8 bits
 
-    def get_serial(self):
+    @property
+    def info(self):
         serial_number = [str(sn) for sn in self.serial_number]
         if not all(not v for v in serial_number):
             return "".join(serial_number)
@@ -220,12 +222,12 @@ class SCD4X:
         values["humidity"] = self.relative_humidity
         return values
 
-    def setup_sensor(self):
-        from nonvolatile import Settings
-        self.altitude = int(Settings["Altitude"])
-
     @property
-    def params(self):
-        sensor_settings = OrderedDict()
-        sensor_settings["Altitude"] = self.altitude
-        return sensor_settings
+    def settings(self):
+        if self._settings["Altitude"] is None:
+            self._settings["Altitude"] = str(self.altitude)
+        return self._settings
+
+    def settings_save(self):
+        self.altitude = int(self.settings["Altitude"])
+        self.persist_settings()

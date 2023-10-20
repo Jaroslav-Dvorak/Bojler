@@ -1,6 +1,9 @@
 
 # _____________________DS18X20_____________________________________________________
 
+# from sensors.ds18x20 import DS18X20
+# from machine import Pin
+# sensor = DS18X20(Pin(19), filename="sensors/ds18x20_1.json")
 
 # _____________________SCD4X_____________________________________________________
 
@@ -12,8 +15,8 @@
 
 # _______________________SOIL MOISTURE_________________________________________)
 
-from machine import ADC
-from sensors.soil_moisture import SoilMoisture
-
-adc = ADC(26)
-sensor = SoilMoisture(adc)
+# from machine import ADC
+# from sensors.soil_moisture import SoilMoisture
+#
+# adc = ADC(26)
+# sensor = SoilMoisture(adc, "sensors/moisture_1.json")

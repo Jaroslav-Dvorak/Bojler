@@ -49,7 +49,6 @@ def save_value(value, filename):
 
 
 Settings = OrderedDict()
-Settings.update(sensor.params)
 Settings["WiFi-SSID"] = ""
 Settings["WiFi-passw"] = ""
 Settings["MQTT-brokr"] = ""
@@ -62,16 +61,16 @@ Settings["widget"] = 0
 def settings_load():
     try:
         with open("settings.json", "r") as f:
-            settings = f.read()
-            settings = json.loads(settings)
+            loaded_settings = f.read()
+            loaded_settings = json.loads(loaded_settings)
     except Exception as e:
         print(e)
         return
     else:
-        unwanted_keys = set(Settings) - set(settings)
+        unwanted_keys = set(loaded_settings) - set(Settings)
         for k in unwanted_keys:
-            settings.pop(k, None)
-        Settings.update(settings)
+            loaded_settings.pop(k, None)
+        Settings.update(loaded_settings)
 
 
 def settings_save():

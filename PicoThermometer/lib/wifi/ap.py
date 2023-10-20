@@ -1,5 +1,6 @@
 import usocket as socket
 import network
+from collections import OrderedDict
 from lib.display.screens import show_settings, clear_display
 from nonvolatile import Settings, settings_save
 from utime import sleep_ms
@@ -24,7 +25,9 @@ def start_ap(ssid):
 
 def web_page():
     forms = ""
-    for k, v in Settings.items():
+    sensor_settings = list(sensor.settings.items())
+    general_settings = list(Settings.items())
+    for k, v in sensor_settings + general_settings:
         if k[0].islower():
             continue
         forms += f"""
@@ -62,18 +65,32 @@ def unquote(s):
 def parse_request(request):
     setting = (request[9:].split()[0].split("="))
     try:
-        Settings[setting[0]] = unquote(setting[1])
-    except KeyError:
-        pass
+        if Settings.get(setting[0], None) is not None:
+            Settings[setting[0]] = unquote(setting[1])
+        elif sensor.settings.get(setting[0], None) is not None:
+            sensor.settings[setting[0]] = unquote(setting[1])
     except IndexError:
         pass
+    # try:
+    #     Settings[setting[0]] = unquote(setting[1])
+    # except KeyError:
+    #     pass
+    # except IndexError:
+    #     pass
+    #
+    # try:
+    #     sensor.settings[setting[0]] = unquote(setting[1])
+    # except KeyError:
+    #     pass
+    # except IndexError:
+    #     pass
 
 
 def save_and_restart(_):
     global Done
     if not Done:
         settings_save()
-        sensor.setup_sensor()
+        sensor.settings_save()
         clear_display()
         sleep_ms(1000)
         machine.reset()
@@ -97,5 +114,8 @@ def start_web():
         conn.sendall(response)
         conn.close()
 
-        show_settings(Settings, partial=scr_partial)
+        all_settings = OrderedDict()
+        all_settings.update(sensor.settings)
+        all_settings.update(Settings)
+        show_settings(all_settings, partial=scr_partial)
         scr_partial = True

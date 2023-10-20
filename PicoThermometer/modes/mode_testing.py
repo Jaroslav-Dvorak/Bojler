@@ -45,11 +45,8 @@ Continue_message = "Press any button..."
 
 
 def sensor_scan():
-    serial = sensor.get_serial()
-    if serial:
-        text_row(f"Sensor found: {serial}", 1)
-        Settings["dallas_sens"] = serial
-        settings_save()
+    if sensor.info:
+        text_row(f"Sensor found: {sensor.info}", 1)
         sleep_ms(1000)
         return True
     else:

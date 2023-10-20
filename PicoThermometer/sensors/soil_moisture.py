@@ -1,14 +1,19 @@
 from collections import OrderedDict
-
+import json
 
 class SoilMoisture:
-    def __init__(self, adc):
+    def __init__(self, adc, filename):
         self.adc = adc
-        self.minimum = 18000
-        self.maximum = 40000
 
         self.displ_min = 0
         self.displ_max = 100
+
+        self.filename = filename
+        self.settings = self.settings_load()
+        self.minimum = int(self.settings["Minimum"])
+        self.maximum = int(self.settings["Maximum"])
+        self.minimum = 18000
+        self.maximum = 40000
 
     def _measure(self):
         num_of_measurements = 1000
@@ -25,13 +30,15 @@ class SoilMoisture:
             print(self._to_percentage(self._measure()))
 
     def _to_percentage(self, val):
-        val = max(self.minimum, min(val, self.maximum))
-        val -= self.minimum
-        diff = self.maximum - self.minimum
+        minimum, maximum = int(self.minimum), int(self.maximum)
+        val = max(minimum, min(val, maximum))
+        val -= minimum
+        diff = maximum - minimum
         val /= diff
         return int(val*100)
 
-    def get_serial(self):
+    @property
+    def info(self):
         return "value:" + str(self._measure())
 
     def get_values(self):
@@ -39,14 +46,19 @@ class SoilMoisture:
         values["moisture"] = self._to_percentage(self._measure())
         return values
 
-    def setup_sensor(self):
-        from nonvolatile import Settings
-        self.minimum = int(Settings["Minimum"])
-        self.maximum = int(Settings["Maximum"])
+    def settings_load(self):
+        settings = OrderedDict()
+        try:
+            with open(self.filename, "r") as f:
+                settings = f.read()
+                settings = json.loads(settings)
+        except Exception as e:
+            print(e)
+            settings["Minimum"] = "18000"
+            settings["Maximum"] = "40000"
+        finally:
+            return settings
 
-    @property
-    def params(self):
-        sensor_settings = OrderedDict()
-        sensor_settings["Minimum"] = self.minimum
-        sensor_settings["Maximum"] = self.maximum
-        return sensor_settings
+    def settings_save(self):
+        with open(self.filename, "w") as f:
+            f.write(json.dumps(self.settings))
