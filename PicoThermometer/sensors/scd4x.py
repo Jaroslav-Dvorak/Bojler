@@ -1,4 +1,5 @@
 import time
+import struct
 from collections import OrderedDict
 from micropython import const
 
@@ -46,6 +47,12 @@ class SCD4X:
         self._settings = {"Altitude": None}
         self.displ_min = 400
         self.displ_max = 5000
+
+        self.units_classes = {"co2": ("ppm", "carbon_dioxide"),
+                              "temperature": ("°C", "temperature"),
+                              "humidity": ("%", "humidity"),
+                              }
+        self.last_values = {}
 
         self.stop_periodic_measurement()
 
@@ -216,11 +223,11 @@ class SCD4X:
 
     def get_values(self):
         self.measure_single_shot()
-        values = OrderedDict()
-        values["co2"] = self.co2
-        values["temperature"] = self.temperature
-        values["humidity"] = self.relative_humidity
-        return values
+        self.last_values = OrderedDict()
+        self.last_values["co2"] = self.co2
+        self.last_values["temperature"] = self.temperature
+        self.last_values["humidity"] = self.relative_humidity
+        return True
 
     @property
     def settings(self):
@@ -231,3 +238,13 @@ class SCD4X:
     def settings_save(self):
         self.altitude = int(self.settings["Altitude"])
         self.persist_settings()
+
+    def get_ble_characteristics(self):
+        battery = b'\x01' + struct.pack("<B", self.last_values["soc"])
+        temperature = b'\x02' + struct.pack("<h", int(self.last_values["temperature"]*100))
+        humidity = b'\x03' + struct.pack("<h", int(self.last_values["humidity"]*100))
+        co2 = b'\x12' + struct.pack("<h", self.last_values["co2"])
+
+        characteristics = battery + temperature + humidity + co2
+
+        return characteristics

@@ -1,5 +1,7 @@
 from collections import OrderedDict
 import json
+import struct
+
 
 class SoilMoisture:
     def __init__(self, adc, filename):
@@ -10,10 +12,11 @@ class SoilMoisture:
 
         self.filename = filename
         self.settings = self.settings_load()
-        self.minimum = int(self.settings["Minimum"])
-        self.maximum = int(self.settings["Maximum"])
-        self.minimum = 18000
-        self.maximum = 40000
+        self.displ_min = 0
+        self.displ_max = 100
+
+        self.units_classes = {"moisture": ("%", "moisture")}
+        self.last_values = {}
 
     def _measure(self):
         num_of_measurements = 1000
@@ -30,7 +33,7 @@ class SoilMoisture:
             print(self._to_percentage(self._measure()))
 
     def _to_percentage(self, val):
-        minimum, maximum = int(self.minimum), int(self.maximum)
+        minimum, maximum = int(self.displ_min), int(self.displ_max)
         val = max(minimum, min(val, maximum))
         val -= minimum
         diff = maximum - minimum
@@ -42,9 +45,8 @@ class SoilMoisture:
         return "value:" + str(self._measure())
 
     def get_values(self):
-        values = OrderedDict()
-        values["moisture"] = self._to_percentage(self._measure())
-        return values
+        self.last_values = {"moisture": self._to_percentage(self._measure())}
+        return True
 
     def settings_load(self):
         settings = OrderedDict()
@@ -54,11 +56,18 @@ class SoilMoisture:
                 settings = json.loads(settings)
         except Exception as e:
             print(e)
-            settings["Minimum"] = "18000"
-            settings["Maximum"] = "40000"
+            settings["Minimum"] = self.settings["Minimum"]
+            settings["Maximum"] = self.settings["Maximum"]
         finally:
             return settings
 
     def settings_save(self):
         with open(self.filename, "w") as f:
             f.write(json.dumps(self.settings))
+
+    def get_ble_characteristics(self):
+        battery = b'\x01' + struct.pack("<B", self.last_values["soc"])
+        moisture = b'\x14' + struct.pack("<h", int(self.last_values["moisture"]*100))
+
+        characteristics = battery + moisture
+        return characteristics

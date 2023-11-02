@@ -5,9 +5,10 @@
 
 from time import sleep_ms
 from micropython import const
-import json
-import _onewire as _ow
 from collections import OrderedDict
+import json
+import struct
+import _onewire as _ow
 
 
 class OneWireError(Exception):
@@ -113,6 +114,9 @@ class DS18X20:
         self.displ_min = int(self.settings["Minimum"])
         self.displ_max = int(self.settings["Maximum"])
 
+        self.units_classes = {"temperature": ("°C", "temperature")}
+        self.last_values = {}
+
     def scan(self):
         return [rom for rom in self.ow.scan() if rom[0] in (0x10, 0x22, 0x28)]
 
@@ -172,8 +176,9 @@ class DS18X20:
         self.convert_temp()
         sleep_ms(750)
         rom = bytes.fromhex(self.settings["rom"])
-        values = {"temperature": self.read_temp(rom)}
-        return values
+        temperature = self.read_temp(rom)
+        self.last_values = {"temperature": temperature}
+        return int(temperature) != -127
 
     def settings_load(self):
         settings = OrderedDict()
@@ -192,3 +197,13 @@ class DS18X20:
     def settings_save(self):
         with open(self.filename, "w") as f:
             f.write(json.dumps(self.settings))
+
+    def get_ble_characteristics(self):
+        battery = b'\x01' + struct.pack("<B", self.last_values["soc"])
+        temperature = b'\x02' + struct.pack("<h", int(self.last_values["temperature"]*100))
+        humidity = b'\x03' + struct.pack("<h", 1250)
+        co2 = b'\x12' + struct.pack("<h", 1250)
+
+        characteristics = battery + temperature #+ humidity + co2
+
+        return characteristics

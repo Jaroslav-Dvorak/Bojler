@@ -1,6 +1,5 @@
 import json
 from collections import OrderedDict
-from sensor import sensor
 
 SEEK_END = 2
 
@@ -55,6 +54,7 @@ Settings["MQTT-brokr"] = ""
 Settings["MQTT-user"] = ""
 Settings["MQTT-passw"] = ""
 Settings["MQTT-name"] = ""
+Settings["BLE-name"] = ""
 Settings["widget"] = 0
 
 

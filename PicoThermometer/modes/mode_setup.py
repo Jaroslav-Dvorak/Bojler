@@ -1,4 +1,4 @@
-from lib.wifi.ap import start_ap, start_web
+from lib.wireless.ap import start_ap, start_web
 from lib.display import screens
 
 

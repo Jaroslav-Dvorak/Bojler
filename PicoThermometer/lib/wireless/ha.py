@@ -1,6 +1,6 @@
 import json
 import machine
-from lib.wifi.umqtt_simple import MQTTClient
+from lib.wireless.umqtt_simple import MQTTClient
 from nonvolatile import Settings
 
 BOARD_ID = machine.unique_id().hex()
@@ -18,7 +18,7 @@ MQTT = MQTTClient(client_id=BOARD_ID,
                   )
 
 
-def send_discovery(name, unit, device_class):
+def send_discovery(name, unit, device_class=None):
     topic = f"{DISCOVERY_PREFIX}/sensor/{DEVICE_NAME}/{name}/config".encode("utf-8")
     config = {
               "name": name,
@@ -28,13 +28,15 @@ def send_discovery(name, unit, device_class):
               "device": {"identifiers": BOARD_ID,
                          "name": DEVICE_NAME,
                          "sw_version": "0.1.0",
-                         "model": "Machrovina_2",
+                         "model": "HBD-v1",
                          "manufacturer": "JardaDvorak"
                          },
               "force_update": False,
               "unique_id": name+BOARD_ID,
-              "device_class": device_class
+              # "device_class": device_class
               }
+    if device_class:
+        config["device_class"] = device_class
     msg = json.dumps(config).encode("utf-8")
     MQTT.publish(topic, msg, retain=True, qos=1)
 

@@ -1,7 +1,12 @@
 from nonvolatile import Settings, settings_save, settings_load
 settings_load()
-from lib.wifi.sta import STA, wait_for_wifi_connection, wifi_connect
-wifi_active = wifi_connect()
+wifi_active = Settings["WiFi-SSID"]
+if wifi_active:
+    from lib.wireless.sta import STA, wait_for_wifi_connection, wifi_connect
+    wifi_connect()
+ble_active = Settings["BLE-name"]
+if ble_active:
+    from lib.wireless.ble_advert import ble_advert, ble
 
 from time import sleep_ms
 from gpio_definitions import BTN_1, BTN_2, BTN_3, GREEN_LED, DONE_PIN
@@ -26,6 +31,7 @@ if __name__ == '__main__':
         import modes.mode_testing as testing
         screens.clear_display()
         if testing.sensor_scan():
+            testing.ble_try_advertising(bat_soc)
             if testing.check_settings():
                 if testing.check_wifi():
                     sleep_ms(100)
@@ -47,29 +53,34 @@ if __name__ == '__main__':
         full_refresh = True
 
     if device_run:
-        mqtt_payload = {}
+        # mqtt_payload = {}
         from modes.mode_regular import load_show_save
         while True:
-            value = load_show_save(full_refresh, bat_soc, sensor)
-            mqtt_payload["soc"] = bat_soc
-            rssi = None
+            load_show_save(full_refresh, bat_soc, sensor)
+            sensor.last_values["soc"] = bat_soc
             if wifi_active:
                 rssi = wait_for_wifi_connection()
                 if rssi:
-                    from lib.wifi.ha import send_state, connect_mqtt, MQTT
+                    from lib.wireless.ha import send_state, connect_mqtt, MQTT
                     if connect_mqtt():
                         GREEN_LED.value(1)
-                        send_state(temperature=value,
-                                   soc=bat_soc,
-                                   signal=rssi)
+                        sensor.last_values["signal"] = rssi
+                        send_state(**sensor.last_values)
                         MQTT.wait_msg()
                         MQTT.disconnect()
                         sleep_ms(500)
+                    # screens.widgets.rect()
+                    screens.widgets.signal_indicator(rssi, 40, 10)
+                    screens.eink.show(screens.widgets.img, partial=True)
                 STA.disconnect()
+
+            if ble_active:
+                ble_advert(sensor.get_ble_characteristics())
+                sleep_ms(500)
+                ble.gap_advertise(None)
+
+            if wifi_active:
                 sleep_ms(1000)
-                # screens.widgets.rect()
-                screens.widgets.signal_indicator(rssi, 40, 10)
-                screens.eink.show(screens.widgets.img, partial=True)
 
             GREEN_LED.value(0)
             screens.eink.deep_sleep()
@@ -77,5 +88,7 @@ if __name__ == '__main__':
             DONE_PIN.value(1)
             sleep_ms(10_000)
 
+            if wifi_active:
+                wifi_active = wifi_connect()
+
             full_refresh = False
-            wifi_active = wifi_connect()
