@@ -111,10 +111,12 @@ class DS18X20:
 
         self.filename = filename
         self.settings = self.settings_load()
-        self.displ_min = int(self.settings["Minimum"])
-        self.displ_max = int(self.settings["Maximum"])
+        self.displ_min = self.settings["Minimum"]
+        self.displ_max = self.settings["Maximum"]
+        self.offset = self.settings["Offset"]
 
         self.units_classes = {"temperature": ("°C", "temperature")}
+
         self.last_values = {}
 
     def scan(self):
@@ -177,6 +179,7 @@ class DS18X20:
         sleep_ms(750)
         rom = bytes.fromhex(self.settings["rom"])
         temperature = self.read_temp(rom)
+        temperature += self.offset
         self.last_values = {"temperature": temperature}
         return int(temperature) != -127
 
@@ -186,11 +189,15 @@ class DS18X20:
             with open(self.filename, "r") as f:
                 settings = f.read()
                 settings = json.loads(settings)
+            settings["Minimum"] = int(settings["Minimum"])
+            settings["Maximum"] = int(settings["Maximum"])
+            settings["Offset"] = float(str(settings["Offset"]).replace(",", "."))
         except Exception as e:
             print(e)
-            settings["Minimum"] = "0"
-            settings["Maximum"] = "70"
+            settings["Minimum"] = 0
+            settings["Maximum"] = 60
             settings["rom"] = None
+            settings["Offset"] = 0.0
         finally:
             return settings
 
@@ -201,9 +208,7 @@ class DS18X20:
     def get_ble_characteristics(self):
         battery = b'\x01' + struct.pack("<B", self.last_values["soc"])
         temperature = b'\x02' + struct.pack("<h", int(self.last_values["temperature"]*100))
-        humidity = b'\x03' + struct.pack("<h", 1250)
-        co2 = b'\x12' + struct.pack("<h", 1250)
 
-        characteristics = battery + temperature #+ humidity + co2
+        characteristics = battery + temperature
 
         return characteristics
