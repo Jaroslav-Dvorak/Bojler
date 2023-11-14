@@ -50,6 +50,7 @@ def save_value(value, filename):
 Settings = OrderedDict()
 Settings["WiFi-SSID"] = ""
 Settings["WiFi-passw"] = ""
+Settings["WiFi-IP"] = "DHCP"
 Settings["MQTT-brokr"] = ""
 Settings["MQTT-user"] = ""
 Settings["MQTT-passw"] = ""
