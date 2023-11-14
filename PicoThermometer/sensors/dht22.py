@@ -126,13 +126,13 @@ class PicoDHT22:
         if self.powerPin is not None:
             self.powerPin.value(1)
             sleep_ms(800)
-        sleep_ms(500)
+        sleep_ms(1000)
         # start state machine
         self.sm.init(DHT22_PIO, freq=500000,
                      set_base=self.dataPin,
                      in_base=self.dataPin,
                      jmp_pin=self.dataPin)
-        sleep_ms(500)
+        sleep_ms(300)
         if self.dht11:
             self.sm.put(10000)
         else:
@@ -148,8 +148,7 @@ class PicoDHT22:
         return value
 
     def read(self):
-        for _ in range(10):
-            sleep_ms(100)
+        for _ in range(20):
             value = self.read_array()
             sumV = 0
             for i in range(4):
@@ -173,7 +172,7 @@ class PicoDHT22:
         temperature_humidity = self.read()
         if temperature_humidity:
             temperature, humidity = temperature_humidity
-            return "{:3.1f}°C  {:3.1f}%".format(temperature, humidity)
+            return "{:3.1f}C  {:3.1f}%".format(temperature, humidity)
         else:
             return None
 
