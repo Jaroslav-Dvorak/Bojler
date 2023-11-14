@@ -126,13 +126,13 @@ class PicoDHT22:
         if self.powerPin is not None:
             self.powerPin.value(1)
             sleep_ms(800)
-        sleep_ms(1000)
+        sleep_ms(200)
         # start state machine
         self.sm.init(DHT22_PIO, freq=500000,
                      set_base=self.dataPin,
                      in_base=self.dataPin,
                      jmp_pin=self.dataPin)
-        sleep_ms(300)
+        # sleep_ms(300)
         if self.dht11:
             self.sm.put(10000)
         else:
@@ -148,7 +148,7 @@ class PicoDHT22:
         return value
 
     def read(self):
-        for _ in range(20):
+        while True:
             value = self.read_array()
             sumV = 0
             for i in range(4):

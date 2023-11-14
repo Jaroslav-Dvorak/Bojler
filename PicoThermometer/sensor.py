@@ -30,7 +30,6 @@ from time import sleep_ms
 
 Pin(9, Pin.OUT).value(True)
 Pin(6, Pin.OUT).value(False)
-sleep_ms(500)
 dht_data = Pin(8, Pin.IN, Pin.PULL_UP)
-sleep_ms(100)
+sleep_ms(1100)
 sensor = PicoDHT22(dataPin=dht_data, filename="sensors/dht22_1.json")
