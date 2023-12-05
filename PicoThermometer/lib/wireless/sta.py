@@ -2,13 +2,21 @@ from time import sleep_ms, time
 import network
 from nonvolatile import Settings
 
-
 STA = network.WLAN(network.STA_IF)
 
 
 def wifi_connect():
     STA.active(True)
     STA.config(pm=0xa11140)  # Diable powersave mode
+    if Settings["WiFi-IP"] != "DHCP":
+        ip, cidr = Settings["WiFi-IP"].split("/")
+        cidr = int(cidr)
+        mask = (0xffffffff >> (32 - cidr)) << (32 - cidr)
+        netmask = (str((0xff000000 & mask) >> 24) + '.' +
+                   str((0x00ff0000 & mask) >> 16) + '.' +
+                   str((0x0000ff00 & mask) >> 8) + '.' +
+                   str((0x000000ff & mask)))
+        STA.ifconfig((ip, netmask, '0.0.0.0', '0.0.0.0'))
     if Settings["WiFi-passw"]:
         STA.connect(Settings["WiFi-SSID"], Settings["WiFi-passw"])
     else:
