@@ -12,6 +12,7 @@ class Widgets(Drawing):
         w = SEEN_HEIGHT-1
         h = 0
 
+        print(values)
         optimized_values = [int(((val - minimum) / (maximum - minimum)) * ((y - h) + h)) for val in values]
 
         thickness = 3
