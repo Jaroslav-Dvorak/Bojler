@@ -44,7 +44,7 @@ class SCD4X:
         self._relative_humidity = None
         self._co2 = None
 
-        self._settings = {"Altitude": None}
+        self._settings = {"Altitude": None, "Tmp-offset": None}
         self.displ_min = 400
         self.displ_max = 5000
 
@@ -153,15 +153,15 @@ class SCD4X:
         self._send_command(_SCD4X_GETTEMPOFFSET, cmd_delay=0.001)
         self._read_reply(self._buffer, 3)
         temp = (self._buffer[0] << 8) | self._buffer[1]
-        return 175.0 * temp / 2**16
+        return 175.0 * temp / ((2**16)-1)
 
     @temperature_offset.setter
     def temperature_offset(self, offset) -> None:
         if offset > 374:
             raise AttributeError(
-                "Offset value must be less than or equal to 374 degrees Celsius"
+                "Offset value must be less tha4n or equal to 37 degrees Celsius"
             )
-        temp = int(offset * 2**16 / 175)
+        temp = int(offset * ((2**16)-1) / 175)
         self._set_command_value(_SCD4X_SETTEMPOFFSET, temp)
 
     @property
@@ -233,10 +233,13 @@ class SCD4X:
     def settings(self):
         if self._settings["Altitude"] is None:
             self._settings["Altitude"] = str(self.altitude)
+        if self._settings["Tmp-offset"] is None:
+            self._settings["Tmp-offset"] = str(-self.temperature_offset)
         return self._settings
 
     def settings_save(self):
         self.altitude = int(self.settings["Altitude"])
+        self.temperature_offset = -float(self.settings["Tmp-offset"].replace(",", "."))
         self.persist_settings()
 
     def get_ble_characteristics(self):
