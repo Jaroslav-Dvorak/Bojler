@@ -14,7 +14,9 @@ MicroPython Driver fot the Sensirion Temperature and Humidity SHT40, SHT41 and S
 
 import time
 import struct
+import json
 from micropython import const
+from collections import OrderedDict
 
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/jposada202020/MicroPython_SHT4X.git"
@@ -81,15 +83,27 @@ class SHT4X:
 
     """
 
-    def __init__(self, i2c, address: int = 0x44) -> None:
+    def __init__(self, i2c, filename, address: int = 0x44) -> None:
         self._i2c = i2c
         self._address = address
         self._data = bytearray(6)
 
         self._command = 0xFD
-        self._temperature_precision = HIGH_PRECISION
+        self._temperature_precision = LOW_PRECISION
         self._heater_power = HEATER20mW
         self._heat_time = TEMP_0_1
+
+        self.filename = filename
+        self.settings = self.settings_load()
+        self.displ_min = self.settings["Minimum"]
+        self.displ_max = self.settings["Maximum"]
+        self.offset = self.settings["Offset"]
+
+        self.units_classes = {
+            "temperature": ("°C", "temperature"),
+            "humidity": ("%", "humidity")
+        }
+        self.last_values = OrderedDict()
 
     @property
     def temperature_precision(self) -> str:
@@ -252,3 +266,52 @@ class SHT4X:
         """
         self._i2c.writeto(self._address, bytes([_RESET]), False)
         time.sleep(0.1)
+
+    @property
+    def info(self):
+        temperature_humidity = self.measurements
+        if temperature_humidity:
+            temperature, humidity = temperature_humidity
+            return "{:3.1f}C  {:3.1f}%".format(temperature, humidity)
+        else:
+            return None
+
+    def get_values(self):
+        temperature_humidity = self.measurements
+        print(temperature_humidity)
+        if temperature_humidity is None:
+            return None
+        temperature, humidity = temperature_humidity
+        temperature += self.offset
+        self.last_values["temperature"] = temperature
+        self.last_values["humidity"] = humidity
+        return True
+
+    def settings_load(self):
+        settings = OrderedDict()
+        try:
+            with open(self.filename, "r") as f:
+                settings = f.read()
+                settings = json.loads(settings)
+            settings["Minimum"] = int(settings["Minimum"])
+            settings["Maximum"] = int(settings["Maximum"])
+            settings["Offset"] = float(str(settings["Offset"]).replace(",", "."))
+        except Exception as e:
+            print(e)
+            settings["Minimum"] = 15
+            settings["Maximum"] = 30
+            settings["Offset"] = 0.0
+        finally:
+            return settings
+
+    def settings_save(self):
+        with open(self.filename, "w") as f:
+            f.write(json.dumps(self.settings))
+
+    def get_ble_characteristics(self):
+        battery = b'\x01' + struct.pack("<B", self.last_values["soc"])
+        temperature = b'\x02' + struct.pack("<h", int(self.last_values["temperature"]*100))
+        humidity = b'\x03' + struct.pack("<h", int(self.last_values["humidity"]*100))
+
+        characteristics = battery + temperature + humidity
+        return characteristics

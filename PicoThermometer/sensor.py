@@ -46,4 +46,4 @@ Pin(8, Pin.OUT).value(0)
 Pin(9, Pin.OUT).value(9)
 
 I2c = I2C(1, scl=Pin(7), sda=Pin(6), freq=400_000)
-sensor = SHT4X(I2c)
+sensor = SHT4X(I2c, filename="sensors/sht41.json")
