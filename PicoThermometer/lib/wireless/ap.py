@@ -63,8 +63,10 @@ def unquote(s):
 
 
 def parse_request(request):
-    setting = (request[9:].split()[0].split("="))
     try:
+
+        setting = (request[9:].split()[0].split("="))
+
         if Settings.get(setting[0], None) is not None:
             Settings[setting[0]] = unquote(setting[1])
         elif sensor.settings.get(setting[0], None) is not None:

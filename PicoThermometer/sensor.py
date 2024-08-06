@@ -1,9 +1,9 @@
 
 # _____________________DS18X20_____________________________________________________
 
-# from sensors.ds18x20 import DS18X20
-# from machine import Pin
-# sensor = DS18X20(Pin(19), filename="sensors/ds18x20_1.json")
+from sensors.ds18x20 import DS18X20
+from machine import Pin
+sensor = DS18X20(Pin(19), filename="sensors/ds18x20_1.json")
 
 # _____________________SCD4X_____________________________________________________
 
@@ -39,11 +39,11 @@
 
 # _____________________SCD4X_____________________________________________________
 
-from machine import I2C, Pin
-from sensors.sht4x import SHT4X
-
-Pin(8, Pin.OUT).value(0)
-Pin(9, Pin.OUT).value(9)
-
-I2c = I2C(1, scl=Pin(7), sda=Pin(6), freq=400_000)
-sensor = SHT4X(I2c, filename="sensors/sht41.json")
+# from machine import I2C, Pin
+# from sensors.sht4x import SHT4X
+#
+# Pin(8, Pin.OUT).value(0)
+# Pin(9, Pin.OUT).value(9)
+#
+# I2c = I2C(1, scl=Pin(7), sda=Pin(6), freq=400_000)
+# sensor = SHT4X(I2c, filename="sensors/sht41.json")
